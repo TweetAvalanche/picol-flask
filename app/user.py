@@ -19,8 +19,8 @@ def add_user():
         return jsonify({"error": "Missing level"}), 400 # 400 Bad Request
 
     # インジェクション
-    if not isinstance(user_id, int):
-        return jsonify({"error": "user_id must be an integer"}), 400 # 400 Bad Request
+    if not user_id.isalnum():
+        return jsonify({"error": "user_id must be alphanumeric"}), 400 # 400 Bad Request
     elif not isinstance(level, int):
         return jsonify({"error": "level must be an integer"}), 400 # 400 Bad Request
 
