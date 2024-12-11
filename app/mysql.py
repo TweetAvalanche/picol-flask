@@ -24,7 +24,7 @@ def init_users(): # TODO:書き換える
         cursor = conn.cursor()
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS users (
-                user_id VARCHAR(255) PRIMARY KEY,
+                uid INT AUTO_INCREMENT PRIMARY KEY,
                 level INT
             )
         """)
@@ -33,9 +33,9 @@ def init_users(): # TODO:書き換える
         conn.close()
     except Error as err:
         print(f"Error: {err}")
-        return jsonify({"error": str(err)}), 500
+        return  jsonify({"error": str(err)}), 500
 
-def init_charas(): # TODO:書き換える
+def init_charas():
     conn = get_db_connection()
     if isinstance(conn, tuple):
         return conn  # エラーメッセージを返す
@@ -63,7 +63,7 @@ def init_tokens(): # TODO:書き換える
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS tokens (
                 token VARCHAR(255) PRIMARY KEY,
-                user_id VARCHAR(255)
+                uid INT
             )
         """)
         conn.commit()
