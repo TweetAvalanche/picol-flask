@@ -1,8 +1,20 @@
-
 from flask import Blueprint, request, jsonify
 import mysql.connector
+from mysql.connector import Error
 
 savedata_bp = Blueprint('savedata', __name__)
+
+def get_db_connection():
+    try:
+        conn = mysql.connector.connect(
+            host='localhost',
+            database='flask_db',
+            user='flask_user',
+            password='flask_password'
+        )
+        return conn
+    except Error as err:
+        return jsonify({"error": str(err)}), 500
 
 # !ユーザー情報の追加
 @savedata_bp.route('/', methods=['POST'])
@@ -25,33 +37,29 @@ def add_savedata():
         return jsonify({"error": "level must be an integer"}), 400 # 400 Bad Request
 
     # データベースへの接続
+    conn = get_db_connection()
+    if isinstance(conn, tuple):
+        return conn  # エラーメッセージを返す
+
     try:
-        conn = mysql.connector.connect(
-            host='localhost',
-            database='flask_db',
-            savedata='flask_user',
-            password='flask_password'
-        )
         cursor = conn.cursor()
         cursor.execute("INSERT INTO savedatas (savedata_id, level) VALUES (%s, %s)", (savedata_id, level))
         conn.commit()
         cursor.close()
         conn.close()
         return jsonify({"message": "savedata added successfully"}), 201 # 201 Created
-    except mysql.connector.Error as err:
+    except Error as err:
         return jsonify({"error": str(err)}), 500 # 500 Internal Server Error
 
 # !ユーザー情報の取得
 @savedata_bp.route('/<int:savedata_id>', methods=['GET'])
 def get_savedata(savedata_id):
     # データベースへの接続
+    conn = get_db_connection()
+    if isinstance(conn, tuple):
+        return conn  # エラーメッセージを返す
+
     try:
-        conn = mysql.connector.connect(
-            host='localhost',
-            database='flask_db',
-            savedata='flask_user',
-            password='flask_password'
-        )
         cursor = conn.cursor(dictionary=True)
         cursor.execute("SELECT * FROM savedatas WHERE savedata_id = %s", (savedata_id,))
         savedata = cursor.fetchone()
@@ -61,7 +69,7 @@ def get_savedata(savedata_id):
             return jsonify(savedata) # 200 OK
         else:
             return jsonify({"error": "savedata not found"}), 404 # 404 Not Found
-    except mysql.connector.Error as err:
+    except Error as err:
         return jsonify({"error": str(err)}), 500 # 500 Internal Server Error
 
 # !ユーザー情報の更新
@@ -80,18 +88,16 @@ def update_savedata(savedata_id):
         return jsonify({"error": "level must be an integer"}), 400
     
     # データベースへの接続
+    conn = get_db_connection()
+    if isinstance(conn, tuple):
+        return conn  # エラーメッセージを返す
+
     try:
-        conn = mysql.connector.connect(
-            host='localhost',
-            database='flask_db',
-            savedata='flask_user',
-            password='flask_password'
-        )
         cursor = conn.cursor()
         cursor.execute("UPDATE savedatas SET level = %s WHERE savedata_id = %s", (level, savedata_id))
         conn.commit()
         cursor.close()
         conn.close()
         return jsonify({"message": "savedata updated successfully"}), 200
-    except mysql.connector.Error as err:
+    except Error as err:
         return jsonify({"error": str(err)}), 500
