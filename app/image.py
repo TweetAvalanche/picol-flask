@@ -15,6 +15,16 @@ def calculate_brightness(image):
     brightness = stat.mean[0]
     return brightness
 
+def calculate_ratio_high_brightness(image):
+    grayscale = image.convert("L")
+    stat = ImageStat.Stat(grayscale)
+    high_brightness = 0
+    for pixel in grayscale.getdata():
+        if pixel > 200:
+            high_brightness += 1
+    ratio_high_brightness = high_brightness / len(list(grayscale.getdata()))
+    return ratio_high_brightness
+
 def calculate_rgb(image):
     stat = ImageStat.Stat(image)
     red, green, blue = stat.mean[:3]
@@ -31,11 +41,13 @@ def analyze_image():
         image = Image.open(file)
         contrast = calculate_contrast(image)
         brightness = calculate_brightness(image)
+        ratio_high_brightness = calculate_ratio_high_brightness(image)
         red, green, blue = calculate_rgb(image)
         
         response = {
             "contrast": contrast,
             "brightness": brightness,
+            "ratio_high_brightness": ratio_high_brightness,
             "red": red,
             "green": green,
             "blue": blue
