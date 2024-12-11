@@ -3,6 +3,8 @@ import numpy as np
 from PIL import Image
 import os
 
+# 適当に動くgifを作るファイルです、そこそこ雑な気がする
+
 def color_character_lineart(lineart_path, output_path, scale_factor=2):
     # キャラクターの線画を読み込む
     lineart = cv2.imread(lineart_path, cv2.IMREAD_GRAYSCALE)
