@@ -7,13 +7,15 @@ savedata_bp = Blueprint('savedata', __name__)
 def get_db_connection():
     try:
         conn = mysql.connector.connect(
-            host='localhost',
+            host='127.0.0.1',  # ホスト名を確認
+            port='3306',  # ポート番号を追加
             database='flask_db',
             user='flask_user',
             password='flask_password'
         )
         return conn
     except Error as err:
+        print(f"Error: {err}")  # エラーメッセージを詳細に記録
         return jsonify({"error": str(err)}), 500
 
 # !ユーザー情報の追加
@@ -48,6 +50,24 @@ def add_savedata():
         cursor.close()
         conn.close()
         return jsonify({"message": "savedata added successfully"}), 201 # 201 Created
+    except Error as err:
+        return jsonify({"error": str(err)}), 500 # 500 Internal Server Error
+    
+# !ユーザー情報一覧の取得
+@savedata_bp.route('/', methods=['GET'])
+def get_savedatas():
+    # データベースへの接続
+    conn = get_db_connection()
+    if isinstance(conn, tuple):
+        return conn
+    
+    try:
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT * FROM savedatas")
+        savedatas = cursor.fetchall()
+        cursor.close()
+        conn.close()
+        return jsonify(savedatas) # 200 OK
     except Error as err:
         return jsonify({"error": str(err)}), 500 # 500 Internal Server Error
 
