@@ -11,4 +11,4 @@ print("--------------------------------")
 print("リクエスト:", "GET", url)
 # 結果を表示
 print("ステータスコード:", response.status_code)
-print("レスポンス:", response._content.decode('utf-8'))
+print("レスポンス:", response._content.decode('unicode-escape'))
