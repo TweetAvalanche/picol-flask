@@ -43,8 +43,11 @@ def init_charas():
         cursor = conn.cursor()
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS charas (
-                chara_id VARCHAR(255) PRIMARY KEY,
-                level INT
+                cid INT AUTO_INCREMENT PRIMARY KEY,
+                uid INT,
+                chara_param VARCHAR(255),
+                chara_name VARCHAR(255),
+                raw_image MEDIUMBLOB
             )
         """)
         conn.commit()
@@ -54,7 +57,7 @@ def init_charas():
         print(f"Error: {err}")
         return jsonify({"error": str(err)}), 500
 
-def init_tokens(): # TODO:書き換える
+def init_tokens():
     conn = get_db_connection()
     if isinstance(conn, tuple):
         return conn  # エラーメッセージを返す
@@ -63,7 +66,9 @@ def init_tokens(): # TODO:書き換える
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS tokens (
                 token VARCHAR(255) PRIMARY KEY,
-                uid INT
+                uid INT,
+                expire_at DATETIME
+                is_valid BOOLEAN DEFAULT TRUE
             )
         """)
         conn.commit()
