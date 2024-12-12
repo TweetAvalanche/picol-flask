@@ -65,7 +65,7 @@ def init_tokens():
         cursor = conn.cursor()
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS tokens (
-                token VARCHAR(255) PRIMARY KEY,
+                token VARCHAR(6) PRIMARY KEY,
                 uid INT,
                 expire_at TIMESTAMP,
                 is_valid BOOLEAN DEFAULT TRUE
