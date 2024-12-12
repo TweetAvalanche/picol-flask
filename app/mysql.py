@@ -16,7 +16,7 @@ def get_db_connection():
         print(f"Error: {err}")  # エラーメッセージを詳細に記録
         return jsonify({"error": str(err)}), 500
 
-def init_users(): # TODO:書き換える
+def init_users():
     conn = get_db_connection()
     if isinstance(conn, tuple):
         return conn  # エラーメッセージを返す
@@ -25,7 +25,7 @@ def init_users(): # TODO:書き換える
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS users (
                 uid INT AUTO_INCREMENT PRIMARY KEY,
-                level INT
+                message VARCHAR(512),
             )
         """)
         conn.commit()

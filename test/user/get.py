@@ -1,8 +1,9 @@
 import requests
-import json
+
+uid = input("ユーザーIDを入力してください: ")
 
 # テスト用のエンドポイントURL
-url = "http://127.0.0.1:5000/user"
+url = f"http://127.0.0.1:5000/user/{uid}"
 
 response = requests.get(url)
 

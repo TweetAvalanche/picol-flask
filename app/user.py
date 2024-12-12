@@ -7,17 +7,8 @@ user_bp = Blueprint('user', __name__)
 # !ユーザー情報の追加
 @user_bp.route('/', methods=['POST'])
 def add_user():
-    # リクエストデータの取得
-    data = request.get_json()
-    level = data.get('level')
 
-    # 値なしエラー
-    if not level:
-        return jsonify({"error": "Missing level"}), 400 # 400 Bad Request
-
-    # インジェクション
-    if not isinstance(level, int):
-        return jsonify({"error": "level must be an integer"}), 400 # 400 Bad Request
+    default_message = "こんにちは"
 
     # データベースへの接続
     conn = get_db_connection()
@@ -26,11 +17,12 @@ def add_user():
 
     try:
         cursor = conn.cursor()
-        cursor.execute("INSERT INTO users (level) VALUES (%s)", (level,))
+        cursor.execute("INSERT INTO users (message) VALUES (%s)", (default_message,))
         conn.commit()
+        # uid = cursor.lastrowid
         cursor.close()
         conn.close()
-        return jsonify({"message": "user added successfully"}), 201 # 201 Created
+        return jsonify({"message": "user added successfully"}), 201 # 201 Created , "uid": uid
     except Error as err:
         return jsonify({"error": str(err)}), 500 # 500 Internal Server Error
     

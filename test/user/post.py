@@ -1,16 +1,10 @@
 import requests
-import random
-import string
 
-url = 'http://localhost:5000/user'  # FlaskアプリのURL
-
-# テストデータ
-data = {
-    'level': 1
-}
+# テスト用のエンドポイントURL
+url = 'http://localhost:5000/user'
 
 # POSTリクエストを送信
-response = requests.post(url, json=data)
+response = requests.post(url)
 
 # レスポンスの内容を表示
 print(f"Status Code: {response.status_code}")
