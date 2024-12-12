@@ -25,7 +25,7 @@ def init_users():
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS users (
                 uid INT AUTO_INCREMENT PRIMARY KEY,
-                message VARCHAR(512),
+                message VARCHAR(512)
             )
         """)
         conn.commit()
