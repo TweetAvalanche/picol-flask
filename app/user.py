@@ -22,12 +22,12 @@ def add_user():
         uid = cursor.lastrowid
         cursor.close()
         conn.close()
-        return jsonify({"status_message": "user added successfully", "uid": uid}), 201
+        return jsonify({"uid": uid, "user_message": default_message, "cid": "", "character_name": ""}), 201
     except Error as err:
         return jsonify({"error": str(err)}), 500
 
 # !ユーザー情報の取得
-@user_bp.route('/message', methods=['GET'])
+@user_bp.route('/', methods=['GET'])
 def get_user():
     # パラメータの取得
     uid = request.args.get('uid', type=int)
@@ -52,14 +52,14 @@ def get_user():
         cursor.close()
         conn.close()
         if user:
-            return jsonify({"status_message": "user got successfully", "message": user["message"]}), 200
+            return jsonify({"uid": uid, "user_message": user["message"], "cid": "TODO", "character_name": "TODO"}), 200
         else:
             return jsonify({"error": "user not found"}),
     except Error as err:
         return jsonify({"error": str(err)}), 500
 
 # !ユーザー情報の更新
-@user_bp.route('/message', methods=['PUT'])
+@user_bp.route('/', methods=['PUT'])
 def update_user():
     # パラメータの取得
     uid = request.args.get('uid', type=int)
@@ -80,18 +80,14 @@ def update_user():
     # SQLインジェクション対策
     if ";" in message or "--" in message or "'" in message or "\"" in message:
         return jsonify({"error": "Invalid characters in message"}), 400
-    
-    # データベースへの接続
-    conn = get_db_connection()
-    if isinstance(conn, tuple):
-        return conn  # エラーメッセージを返す
 
     try:
+        conn = get_db_connection()
         cursor = conn.cursor()
         cursor.execute("UPDATE users SET message = %s WHERE uid = %s", (message, uid))
         conn.commit()
         cursor.close()
         conn.close()
-        return jsonify({"status_message": "user updated successfully"}), 200
+        return jsonify({"uid": uid, "user_message": message, "cid": "TODO", "character_name": "TODO"}), 200
     except Error as err:
         return jsonify({"error": str(err)}), 500

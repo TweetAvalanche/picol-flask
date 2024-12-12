@@ -65,9 +65,9 @@ def init_tokens():
         cursor = conn.cursor()
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS tokens (
-                token VARCHAR(255) PRIMARY KEY,
+                token VARCHAR(6) PRIMARY KEY,
                 uid INT,
-                expire_at DATETIME
+                expire_at TIMESTAMP,
                 is_valid BOOLEAN DEFAULT TRUE
             )
         """)
@@ -80,5 +80,13 @@ def init_tokens():
 
 def init_db():
     result = init_users()
+    if isinstance(result, tuple):
+        return result  # エラーメッセージを返す
+
+    # result = init_charas()
+    # if isinstance(result, tuple):
+    #     return result  # エラーメッセージを返す
+
+    result = init_tokens()
     if isinstance(result, tuple):
         return result  # エラーメッセージを返す

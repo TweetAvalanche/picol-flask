@@ -1,0 +1,6 @@
+{
+  "uid": "int",
+  "user_message": "string",
+  "cid": "string",
+  "character_name": "string"
+}
