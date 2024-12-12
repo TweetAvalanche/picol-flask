@@ -82,3 +82,11 @@ def init_db():
     result = init_users()
     if isinstance(result, tuple):
         return result  # エラーメッセージを返す
+
+    # result = init_charas()
+    # if isinstance(result, tuple):
+    #     return result  # エラーメッセージを返す
+
+    result = init_tokens()
+    if isinstance(result, tuple):
+        return result  # エラーメッセージを返す
