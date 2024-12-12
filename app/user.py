@@ -19,34 +19,27 @@ def add_user():
         cursor = conn.cursor()
         cursor.execute("INSERT INTO users (message) VALUES (%s)", (default_message,))
         conn.commit()
-        # uid = cursor.lastrowid
+        uid = cursor.lastrowid
         cursor.close()
         conn.close()
-        return jsonify({"message": "user added successfully"}), 201 # 201 Created , "uid": uid
+        return jsonify({"status_message": "user added successfully", "uid": uid}), 201
     except Error as err:
-        return jsonify({"error": str(err)}), 500 # 500 Internal Server Error
-    
-# !ユーザー情報一覧の取得
-@user_bp.route('/', methods=['GET'])
-def get_users():
-    # データベースへの接続
-    conn = get_db_connection()
-    if isinstance(conn, tuple):
-        return conn
-    
-    try:
-        cursor = conn.cursor(dictionary=True)
-        cursor.execute("SELECT * FROM users")
-        users = cursor.fetchall()
-        cursor.close()
-        conn.close()
-        return jsonify(users) # 200 OK
-    except Error as err:
-        return jsonify({"error": str(err)}), 500 # 500 Internal Server Error
+        return jsonify({"error": str(err)}), 500
 
 # !ユーザー情報の取得
-@user_bp.route('/<int:uid>', methods=['GET'])
-def get_user(uid):
+@user_bp.route('/message', methods=['GET'])
+def get_user():
+    # パラメータの取得
+    uid = request.args.get('uid', type=int)
+
+    # 値なしエラー
+    if not uid:
+        return jsonify({"error": "Missing uid"}), 400
+    
+    # 型検証
+    if not isinstance(uid, int):
+        return jsonify({"error": "uid must be an integer"}), 400
+
     # データベースへの接続
     conn = get_db_connection()
     if isinstance(conn, tuple):
@@ -59,26 +52,34 @@ def get_user(uid):
         cursor.close()
         conn.close()
         if user:
-            return jsonify(user) # 200 OK
+            return jsonify({"status_message": "user got successfully", "message": user["message"]}), 200
         else:
-            return jsonify({"error": "user not found"}), 404 # 404 Not Found
+            return jsonify({"error": "user not found"}),
     except Error as err:
-        return jsonify({"error": str(err)}), 500 # 500 Internal Server Error
+        return jsonify({"error": str(err)}), 500
 
 # !ユーザー情報の更新
-@user_bp.route('/<int:uid>', methods=['PUT'])
-def update_user(uid):
-    # リクエストデータの取得
-    data = request.get_json()
-    level = data.get('level')
+@user_bp.route('/message', methods=['PUT'])
+def update_user():
+    # パラメータの取得
+    uid = request.args.get('uid', type=int)
+    message = request.args.get('message', type=str)
 
     # 値なしエラー
-    if not level:
-        return jsonify({"error": "Missing level"}), 400
+    if not uid:
+        return jsonify({"error": "Missing uid"}), 400
+    if not message:
+        return jsonify({"error": "Missing message"}), 400
     
-    # インジェクション
-    if not isinstance(level, int):
-        return jsonify({"error": "level must be an integer"}), 400
+    # 型検証
+    if not isinstance(uid, int):
+        return jsonify({"error": "uid must be an integer"}), 400
+    if not isinstance(message, str):
+        return jsonify({"error": "message must be a string"}), 400
+    
+    # SQLインジェクション対策
+    if ";" in message or "--" in message or "'" in message or "\"" in message:
+        return jsonify({"error": "Invalid characters in message"}), 400
     
     # データベースへの接続
     conn = get_db_connection()
@@ -87,10 +88,10 @@ def update_user(uid):
 
     try:
         cursor = conn.cursor()
-        cursor.execute("UPDATE users SET level = %s WHERE uid = %s", (level, uid))
+        cursor.execute("UPDATE users SET message = %s WHERE uid = %s", (message, uid))
         conn.commit()
         cursor.close()
         conn.close()
-        return jsonify({"message": "user updated successfully"}), 200
+        return jsonify({"status_message": "user updated successfully"}), 200
     except Error as err:
         return jsonify({"error": str(err)}), 500
