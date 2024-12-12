@@ -18,5 +18,5 @@ jobs:
 
       - name: Build and run docker-compose
         run: |
-          docker compose down
+          docker compose down --remove-orphans
           docker compose up -d --build
