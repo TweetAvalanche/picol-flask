@@ -67,7 +67,7 @@ def init_tokens():
             CREATE TABLE IF NOT EXISTS tokens (
                 token VARCHAR(255) PRIMARY KEY,
                 uid INT,
-                expire_at DATETIME
+                expire_at TIMESTAMP,
                 is_valid BOOLEAN DEFAULT TRUE
             )
         """)
