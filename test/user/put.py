@@ -4,7 +4,7 @@ uid = input("ユーザーIDを入力してください: ")
 message = input("メッセージを入力してください: ")
 
 # テスト用のエンドポイントURL
-url = f"http://127.0.0.1:5000/user?uid={uid}&message={message}"
+url = f"http://127.0.0.1:5012/user?uid={uid}&message={message}"
 
 response = requests.put(url)
 

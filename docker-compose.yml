@@ -3,7 +3,7 @@ services:
     build: .
     container_name: flask
     ports:
-      - "5000:5000"
+      - "5012:5012"
     depends_on:
       - mysql
     restart: always

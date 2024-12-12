@@ -1,7 +1,7 @@
 import requests
 
 # テスト用のエンドポイントURL
-url = 'http://localhost:5000/user'
+url = 'http://localhost:5012/user'
 
 # POSTリクエストを送信
 response = requests.post(url)

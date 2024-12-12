@@ -3,7 +3,7 @@ import requests
 uid = input("ユーザーIDを入力してください: ")
 
 # テスト用のエンドポイントURL
-url = f"http://127.0.0.1:5000/user?uid={uid}"
+url = f"http://127.0.0.1:5012/user?uid={uid}"
 
 response = requests.get(url)
 

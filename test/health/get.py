@@ -1,7 +1,7 @@
 import requests
 
 # テスト用のエンドポイントURL
-url = "http://127.0.0.1:5000/health"
+url = "http://127.0.0.1:5012/health"
 
 response = requests.get(url)
 

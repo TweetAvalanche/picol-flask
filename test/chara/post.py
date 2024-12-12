@@ -3,7 +3,7 @@ import os
 import json
 
 # テスト用のエンドポイントURL
-url = "http://127.0.0.1:5000/image/analyze"
+url = "http://127.0.0.1:5012/image/analyze"
 
 # 送信する画像ファイル
 dir_path = os.path.dirname(os.path.abspath(__file__)) + "/"
