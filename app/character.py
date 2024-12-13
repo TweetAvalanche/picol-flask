@@ -3,6 +3,7 @@ from mysql.connector import Error
 import base64
 from .mysql import get_db_connection
 from .character_defs import generate_character
+wfrom .user import get_user
 
 character_bp = Blueprint('character', __name__)
 
@@ -63,9 +64,12 @@ def add_character():
         cid = cursor.lastrowid
         cursor.close()
         conn.close()
+        set_default_character(cid)
+        user = get_user(uid)
         response = {
-            "cid": cid,
             "uid": uid,
+            "user_message": user["user_message"],
+            "cid": cid,
             "character_name": character_name,
             "character_param": character_param,
             "character_aura_image": character_aura_image
@@ -101,10 +105,12 @@ def get_character(cid = None):
         character = cursor.fetchone()
         cursor.close()
         conn.close()
+        user = get_user(character["uid"])
         if character:
             response = {
-                "cid": cid,
                 "uid": character["uid"],
+                "user_message": user["user_message"],
+                "cid": cid,
                 "character_param": character["character_param"],
                 "character_name": character["character_name"],
                 "character_aura_image": character["character_aura_image"],
@@ -143,9 +149,11 @@ def get_all_characters():
         conn.close()
         response = []
         for character in characters:
+            user = get_user(character["uid"])
             response.append({
-                "cid": character["cid"],
                 "uid": character["uid"],
+                "user_message": user["user_message"],
+                "cid": character["cid"],
                 "character_param": character["character_param"],
                 "character_name": character["character_name"],
                 "character_aura_image": character["character_aura_image"],
@@ -198,10 +206,18 @@ def rename_character():
         return jsonify({"error": str(err)}), 500
 
 @character_bp.route("/default", methods=["PUT"])
-def set_default_character():
-    # パラメータの取得
-    uid = request.args.get('uid', type=int)
-    cid = request.args.get('cid', type=int)
+def set_default_character(cid = None):
+
+    uid = ""
+    cid = ""
+
+    if cid is None:
+        # パラメータの取得
+        uid = request.args.get('uid', type=int)
+        cid = request.args.get('cid', type=int)
+    else:
+        character = get_character(cid)
+        uid = character["uid"]
 
     # 値なしエラー
     if not uid:
