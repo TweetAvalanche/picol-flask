@@ -102,7 +102,7 @@ def generate_image():
 
         # キャラクターのデフォルトの名前を決めて仮置きしたものを登録する
         # TODO: データベースにparamやrawなどを登録し、name、paramやcidとかも返す
-        # return jsonify({"uid": uid, "user_message": "", "cid": "NOT_IMPLEMENTED", "character_name": "NOT_IMPLEMENTED", "character_param": "NOT_IMPLEMENTED"}), 200
+        # return jsonify({"uid": uid, "user_message": "", "cid": 0, "character_name": "NOT_IMPLEMENTED", "character_param": "NOT_IMPLEMENTED"}), 200
 
         return jsonify(response)
     except Exception as e: # 500 internal server error
