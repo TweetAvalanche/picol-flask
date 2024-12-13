@@ -5,6 +5,7 @@ import string
 from datetime import datetime, timedelta
 from .mysql import get_db_connection
 from .user import get_user
+from .character import get_character
 
 token_bp = Blueprint('token', __name__)
 
@@ -74,6 +75,16 @@ def check_token():
         return jsonify({"error": str(e)}), 500
     if token_data:
         uid = int(token_data["uid"])
-        return get_user(uid)
+        user = get_user(uid)
+        character = get_character(user["default_cid"])
+        response = {
+            "uid": uid,
+            "user_message": user["user_message"],
+            "cid": character["cid"],
+            "character_name": character["character_name"],
+            "character_param": character["character_param"],
+            "character_aura_image": character["character_aura_image"]
+        }
+        return jsonify(response)
     else:
         return jsonify({"error": "token not found or not valid"}), 404
