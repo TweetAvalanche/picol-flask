@@ -9,8 +9,7 @@ from .character import get_character
 
 token_bp = Blueprint('token', __name__)
 
-
-
+# !トークンの生成
 @token_bp.route("/", methods=["POST"])
 def create_token():
     # パラメータの取得
@@ -44,6 +43,7 @@ def create_token():
 
     return jsonify({"token": token})
 
+# !トークンの検証
 @token_bp.route("/", methods=["GET"])
 def check_token():
     # パラメータの取得

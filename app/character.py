@@ -3,12 +3,29 @@ from mysql.connector import Error
 import base64
 from .mysql import get_db_connection
 from .character_defs import generate_character
-from .user import get_user_message
 
 character_bp = Blueprint('character', __name__)
 
-# 写真から得たパラメータを返す
+# !ユーザーメッセージの取得
+def get_user_message(uid):
+    conn = get_db_connection()
+    if isinstance(conn, tuple):
+        return None  # エラーメッセージを返す
 
+    try:
+        cursor = conn.cursor()
+        cursor.execute("SELECT message FROM users WHERE uid = %s", (uid,))
+        result = cursor.fetchone()
+        cursor.close()
+        conn.close()
+        if result:
+            return result[0]
+        else:
+            return None
+    except Error as err:
+        return None
+
+# !キャラクターの追加
 @character_bp.route("/", methods=["POST"])
 def add_character():
 
@@ -77,6 +94,7 @@ def add_character():
     except Error as err:
         return jsonify({"error": str(err)}), 500
 
+# !キャラクターの取得
 @character_bp.route("/", methods=["GET"])
 def get_character(cid = None):
 
@@ -121,6 +139,7 @@ def get_character(cid = None):
     except Error as err:
         return jsonify({"error": str(err)}), 500
 
+# !全キャラクターの取得
 @character_bp.route("/all", methods=["GET"])
 def get_all_characters():
     
@@ -161,6 +180,7 @@ def get_all_characters():
     except Error as err:
         return jsonify({"error": str(err)}), 500
 
+# !キャラクターのリネーム
 @character_bp.route("/rename", methods=["PUT"])
 def rename_character():
 
@@ -204,6 +224,7 @@ def rename_character():
     except Error as err:
         return jsonify({"error": str(err)}), 500
 
+# !デフォルトキャラクターの設定
 @character_bp.route("/default", methods=["PUT"])
 def set_default_character(cid = None):
 
