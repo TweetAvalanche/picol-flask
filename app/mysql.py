@@ -36,19 +36,19 @@ def init_users():
         print(f"Error: {err}")
         return  jsonify({"error": str(err)}), 500
 
-def init_charas():
+def init_characters():
     conn = get_db_connection()
     if isinstance(conn, tuple):
         return conn  # エラーメッセージを返す
     try:
         cursor = conn.cursor()
         cursor.execute("""
-            CREATE TABLE IF NOT EXISTS charas (
+            CREATE TABLE IF NOT EXISTS characters (
                 cid INT AUTO_INCREMENT PRIMARY KEY,
                 uid INT,
                 character_param VARCHAR(255),
                 character_name VARCHAR(255),
-                raw_image BASE64 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                raw_image MEDIUMBLOB
             )
         """)
         conn.commit()
