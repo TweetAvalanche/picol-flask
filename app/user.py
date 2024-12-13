@@ -93,7 +93,7 @@ def get_user(uid = None):
         return jsonify({"error": str(err)}), 500
 
 # !ユーザー情報の更新
-@user_bp.route('/', methods=['PUT'])
+@user_bp.route('/message', methods=['PUT'])
 def update_user():
     # パラメータの取得
     uid = request.args.get('uid', type=int)

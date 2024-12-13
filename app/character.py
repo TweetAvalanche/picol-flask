@@ -66,10 +66,9 @@ def add_character():
         response = {
             "cid": cid,
             "uid": uid,
-            "character_param": character_param,
             "character_name": character_name,
-            "character_aura_image": character_aura_image,
-            "raw_image": character["raw_image"]
+            "character_param": character_param,
+            "character_aura_image": character_aura_image
         }
         return jsonify(response), 200
     except Error as err:
@@ -77,11 +76,11 @@ def add_character():
 
 @character_bp.route("/", methods=["GET"])
 def get_character(cid = None):
-    
+
     # パラメータの取得
     if cid is None:
         cid = request.args.get('cid', type=int)
-
+    
     # 値なしエラー
     if not cid:
         return jsonify({"error": "Missing cid"}), 400
@@ -193,6 +192,7 @@ def rename_character():
         cursor.close()
         conn.close()
         response = get_character(cid)
+        del response["raw_image"]
         return jsonify(response), 200
     except Error as err:
         return jsonify({"error": str(err)}), 500
