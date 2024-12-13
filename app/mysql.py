@@ -46,7 +46,7 @@ def init_characters():
             CREATE TABLE IF NOT EXISTS characters (
                 cid INT AUTO_INCREMENT PRIMARY KEY,
                 uid INT,
-                character_param VARCHAR(255),
+                character_param VARCHAR(16),
                 character_name VARCHAR(255),
                 raw_image MEDIUMBLOB
             )
@@ -84,10 +84,12 @@ def init_db():
     if isinstance(result, tuple):
         return result  # エラーメッセージを返す
 
-    # result = init_charas()
-    # if isinstance(result, tuple):
-    #     return result  # エラーメッセージを返す
+    result = init_characters()
+    if isinstance(result, tuple):
+        return result  # エラーメッセージを返す
 
     result = init_tokens()
     if isinstance(result, tuple):
         return result  # エラーメッセージを返す
+    
+    return jsonify({"message": "Database initialized"}), 200

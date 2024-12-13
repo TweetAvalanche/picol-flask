@@ -17,6 +17,7 @@ def add_user():
 
     try:
         cursor = conn.cursor()
+        # パラメータをタプルとして渡すことで、SQLインジェクションを防ぐ
         cursor.execute("INSERT INTO users (message) VALUES (%s)", (default_message,))
         conn.commit()
         uid = cursor.lastrowid
@@ -49,6 +50,7 @@ def get_user(uid = None):
 
     try:
         cursor = conn.cursor(dictionary=True)
+        # パラメータをタプルとして渡すことで、SQLインジェクションを防ぐ
         cursor.execute("SELECT * FROM users WHERE uid = %s", (uid,))
         user = cursor.fetchone()
         cursor.close()
@@ -83,9 +85,14 @@ def update_user():
     if ";" in message or "--" in message or "'" in message or "\"" in message:
         return jsonify({"error": "Invalid characters in message"}), 400
 
+    # データベースへの接続
+    conn = get_db_connection()
+    if isinstance(conn, tuple):
+        return conn  # エラーメッセージを返す
+
     try:
-        conn = get_db_connection()
         cursor = conn.cursor()
+        # パラメータをタプルとして渡すことで、SQLインジェクションを防ぐ
         cursor.execute("UPDATE users SET message = %s WHERE uid = %s", (message, uid))
         conn.commit()
         cursor.close()
