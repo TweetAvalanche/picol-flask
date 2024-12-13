@@ -3,7 +3,7 @@ from mysql.connector import Error
 import base64
 from .mysql import get_db_connection
 from .character_defs import generate_character
-from .user import get_user
+from .user import get_user_message
 
 character_bp = Blueprint('character', __name__)
 
@@ -65,10 +65,9 @@ def add_character():
         cursor.close()
         conn.close()
         set_default_character(cid)
-        user = get_user(uid)
         response = {
             "uid": uid,
-            "user_message": user["user_message"],
+            "user_message": get_user_message(uid),
             "cid": cid,
             "character_name": character_name,
             "character_param": character_param,
@@ -105,11 +104,11 @@ def get_character(cid = None):
         character = cursor.fetchone()
         cursor.close()
         conn.close()
-        user = get_user(character["uid"])
         if character:
+            uid = character["uid"]
             response = {
-                "uid": character["uid"],
-                "user_message": user["user_message"],
+                "uid": uid,
+                "user_message": get_user_message(uid),
                 "cid": cid,
                 "character_param": character["character_param"],
                 "character_name": character["character_name"],
@@ -149,10 +148,10 @@ def get_all_characters():
         conn.close()
         response = []
         for character in characters:
-            user = get_user(character["uid"])
+            uid = character["uid"]
             response.append({
-                "uid": character["uid"],
-                "user_message": user["user_message"],
+                "uid": uid,
+                "user_message": get_user_message(uid),
                 "cid": character["cid"],
                 "character_param": character["character_param"],
                 "character_name": character["character_name"],

@@ -5,6 +5,25 @@ from .character import get_character
 
 user_bp = Blueprint('user', __name__)
 
+# !ユーザーメッセージの取得
+def get_user_message(uid):
+    conn = get_db_connection()
+    if isinstance(conn, tuple):
+        return None  # エラーメッセージを返す
+
+    try:
+        cursor = conn.cursor()
+        cursor.execute("SELECT message FROM users WHERE uid = %s", (uid,))
+        result = cursor.fetchone()
+        cursor.close()
+        conn.close()
+        if result:
+            return result[0]
+        else:
+            return None
+    except Error as err:
+        return None
+
 # !ユーザー情報の追加
 @user_bp.route('/', methods=['POST'])
 def add_user():
