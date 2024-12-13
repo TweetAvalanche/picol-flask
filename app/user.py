@@ -22,7 +22,7 @@ def add_user():
         uid = cursor.lastrowid
         cursor.close()
         conn.close()
-        return jsonify({"uid": uid, "user_message": default_message, "cid": "", "character_name": ""}), 201
+        return jsonify({"uid": uid, "user_message": default_message, "cid": "NOT_IMPLEMENTED", "character_name": "NOT_IMPLEMENTED", "character_param": "NOT_IMPLEMENTED"}), 201
     except Error as err:
         return jsonify({"error": str(err)}), 500
 
@@ -54,7 +54,7 @@ def get_user(uid = None):
         cursor.close()
         conn.close()
         if user:
-            return jsonify({"uid": uid, "user_message": user["message"], "cid": "TODO", "character_name": "TODO"}), 200
+            return jsonify({"uid": uid, "user_message": user["message"], "cid": "NOT_IMPLEMENTED", "character_name": "NOT_IMPLEMENTED", "character_param": "NOT_IMPLEMENTED"}), 200
         else:
             return jsonify({"error": "user not found"}), 404
     except Error as err:
@@ -90,6 +90,6 @@ def update_user():
         conn.commit()
         cursor.close()
         conn.close()
-        return jsonify({"uid": uid, "user_message": message, "cid": "TODO", "character_name": "TODO"}), 200
+        return jsonify({"uid": uid, "user_message": message, "cid": "NOT_IMPLEMENTED", "character_name": "NOT_IMPLEMENTED", "character_param": "NOT_IMPLEMENTED"}), 200
     except Error as err:
         return jsonify({"error": str(err)}), 500
