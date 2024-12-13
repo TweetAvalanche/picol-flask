@@ -25,7 +25,8 @@ def init_users():
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS users (
                 uid INT AUTO_INCREMENT PRIMARY KEY,
-                message VARCHAR(512)
+                message VARCHAR(512),
+                default_cid INT,
             )
         """)
         conn.commit()
@@ -45,9 +46,9 @@ def init_charas():
             CREATE TABLE IF NOT EXISTS charas (
                 cid INT AUTO_INCREMENT PRIMARY KEY,
                 uid INT,
-                chara_param VARCHAR(255),
-                chara_name VARCHAR(255),
-                raw_image MEDIUMBLOB
+                character_param VARCHAR(255),
+                character_name VARCHAR(255),
+                raw_image BASE64 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             )
         """)
         conn.commit()

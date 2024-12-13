@@ -44,6 +44,10 @@ def analyze_image():
             "green": green,
             "blue": blue
         }
+
+        # デフォルトの名前を決める
+        # TODO: データベースにparamやrawなどを登録し、name、paramやcidとかも返す
+
         return jsonify(response)
     except Exception as e: # 500 internal server error
         return jsonify({"error": str(e)}), 500

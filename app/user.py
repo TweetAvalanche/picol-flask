@@ -28,9 +28,11 @@ def add_user():
 
 # !ユーザー情報の取得
 @user_bp.route('/', methods=['GET'])
-def get_user():
+def get_user(uid = None):
+    
     # パラメータの取得
-    uid = request.args.get('uid', type=int)
+    if uid is None:
+        uid = request.args.get('uid', type=int)
 
     # 値なしエラー
     if not uid:
@@ -54,7 +56,7 @@ def get_user():
         if user:
             return jsonify({"uid": uid, "user_message": user["message"], "cid": "TODO", "character_name": "TODO"}), 200
         else:
-            return jsonify({"error": "user not found"}),
+            return jsonify({"error": "user not found"}), 404
     except Error as err:
         return jsonify({"error": str(err)}), 500
 

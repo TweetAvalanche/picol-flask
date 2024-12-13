@@ -1,16 +1,19 @@
 from flask import Blueprint, request, jsonify
 from mysql.connector import Error
-from .mysql import get_db_connection
 import random
 import string
 from datetime import datetime, timedelta
+from .mysql import get_db_connection
+from .user import get_user
 
 token_bp = Blueprint('token', __name__)
+
+
 
 @token_bp.route("/", methods=["POST"])
 def create_token():
     # パラメータの取得
-    uid = request.args.get('uid')
+    uid = int(request.args.get('uid'))
 
     # 値なしエラー
     if not uid:
@@ -69,8 +72,8 @@ def check_token():
         conn.close()
     except Error as e:
         return jsonify({"error": str(e)}), 500
-
     if token_data:
-        return jsonify({"uid": token_data["uid"], "user_message": "TODO", "cid": "TODO", "character_name": "TODO"})
+        uid = int(token_data["uid"])
+        return get_user(uid)
     else:
         return jsonify({"error": "token not found or not valid"}), 404
