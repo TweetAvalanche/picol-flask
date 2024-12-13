@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
 from mysql.connector import Error
 from .mysql import get_db_connection
+from .character import get_character
 
 user_bp = Blueprint('user', __name__)
 
@@ -27,8 +28,9 @@ def add_user():
             "uid": uid,
             "user_message": default_message,
             "cid": 0,
-            "character_name": "NOT_IMPLEMENTED",
-            "character_param": "NOT_IMPLEMENTED"
+            "character_name": "",
+            "character_param": "",
+            "character_aura_image": ""
         }
         return jsonify(response), 201
     except Error as err:
@@ -63,14 +65,28 @@ def get_user(uid = None):
         cursor.close()
         conn.close()
         if user:
-            response = {
-                "uid": uid,
-                "user_message": user["message"],
-                "cid": 0,
-                "character_name": "NOT_IMPLEMENTED",
-                "character_param": "NOT_IMPLEMENTED"
-            }
-            return jsonify(response), 200
+            cid = user['default_cid']
+            if cid == 0:
+                response = {
+                    "uid": uid,
+                    "user_message": user['message'],
+                    "cid": 0,
+                    "character_name": "",
+                    "character_param": "",
+                    "character_aura_image": ""
+                }
+                return jsonify(response), 200
+            else:
+                character = get_character(cid)
+                response = {
+                    "uid": uid,
+                    "user_message": user['message'],
+                    "cid": cid,
+                    "character_name": character['character_name'],
+                    "character_param": character['character_param'],
+                    "character_aura_image": character['character_aura_image']
+                }
+                return jsonify(response), 200
         else:
             return jsonify({"error": "user not found"}), 404
     except Error as err:
@@ -111,13 +127,28 @@ def update_user():
         conn.commit()
         cursor.close()
         conn.close()
-        response = {
-            "uid": uid,
-            "user_message": message,
-            "cid": 0,
-            "character_name": "NOT_IMPLEMENTED",
-            "character_param": "NOT_IMPLEMENTED"
-        }
-        return jsonify(response), 200
+        user = get_user(uid)
+        cid = user['default_cid']
+        if cid == 0:
+            response = {
+                "uid": uid,
+                "user_message": user['message'],
+                "cid": 0,
+                "character_name": "",
+                "character_param": "",
+                "character_aura_image": ""
+            }
+            return jsonify(response), 200
+        else:
+            character = get_character(cid)
+            response = {
+                "uid": uid,
+                "user_message": user['message'],
+                "cid": cid,
+                "character_name": character['character_name'],
+                "character_param": character['character_param'],
+                "character_aura_image": character['character_aura_image']
+            }
+            return jsonify(response), 200
     except Error as err:
         return jsonify({"error": str(err)}), 500

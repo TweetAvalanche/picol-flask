@@ -68,7 +68,8 @@ def add_character():
             "uid": uid,
             "character_param": character_param,
             "character_name": character_name,
-            "character_aura_image": character_aura_image
+            "character_aura_image": character_aura_image,
+            "raw_image": character["raw_image"]
         }
         return jsonify(response), 200
     except Error as err:
@@ -107,6 +108,7 @@ def get_character(cid = None):
                 "uid": character["uid"],
                 "character_param": character["character_param"],
                 "character_name": character["character_name"],
+                "character_aura_image": character["character_aura_image"],
                 "raw_image": character["raw_image"]
             }
             return jsonify(response), 200
@@ -147,13 +149,13 @@ def get_all_characters():
                 "uid": character["uid"],
                 "character_param": character["character_param"],
                 "character_name": character["character_name"],
-                "raw_image": character["raw_image"]
+                "character_aura_image": character["character_aura_image"],
             })
         return jsonify(response), 200
     except Error as err:
         return jsonify({"error": str(err)}), 500
 
-@character_bp.route("/", methods=["PUT"])
+@character_bp.route("/rename", methods=["PUT"])
 def rename_character():
 
     # パラメータの取得
@@ -187,6 +189,44 @@ def rename_character():
             SET character_name = %s
             WHERE cid = %s
         """, (character_name, cid))
+        conn.commit()
+        cursor.close()
+        conn.close()
+        response = get_character(cid)
+        return jsonify(response), 200
+    except Error as err:
+        return jsonify({"error": str(err)}), 500
+
+@character_bp.route("/default", methods=["PUT"])
+def set_default_character():
+    # パラメータの取得
+    uid = request.args.get('uid', type=int)
+    cid = request.args.get('cid', type=int)
+
+    # 値なしエラー
+    if not uid:
+        return jsonify({"error": "Missing uid"}), 400
+    if not cid:
+        return jsonify({"error": "Missing cid"}), 400
+
+    # 型検証
+    if not isinstance(uid, int):
+        return jsonify({"error": "uid must be an integer"}), 400
+    if not isinstance(cid, int):
+        return jsonify({"error": "cid must be an integer"}), 400
+
+    # データベースへの接続
+    conn = get_db_connection()
+    if isinstance(conn, tuple):
+        return conn  # エラーメッセージを返す
+
+    try:
+        cursor = conn.cursor()
+        cursor.execute("""
+            UPDATE users
+            SET default_cid = %s
+            WHERE uid = %s
+        """, (cid, uid))
         conn.commit()
         cursor.close()
         conn.close()
