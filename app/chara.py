@@ -23,7 +23,7 @@ def calculate_brightness(image, resize_factor=0.5):
     brightness = stat.mean[0]
     return brightness
 
-def calculate_ratio_high_brightness(image, resize_factor=0.5):
+def calculate_high_brightness_ratio(image, resize_factor=0.5):
     image = image.resize((int(image.width * resize_factor), int(image.height * resize_factor)))
     grayscale = np.array(image.convert("L"))
     high = np.sum(grayscale >= 170)
@@ -36,7 +36,21 @@ def calculate_rgb(image, resize_factor=0.5):
     red, green, blue = stat.mean[:3]
     return red, green, blue
 
-
+def calculate_base_id(red, green, blue, brightness, ratio_high_brightness) -> int:
+    is_high_red = True if red >= 150 else False
+    is_high_green = True if green >= 150 else False
+    is_high_blue = True if blue >= 150 else False
+    is_high_ratio_high_brightness = True if ratio_high_brightness >= 0.5 else False
+    is_high_brightness = True if brightness >= 150 else False
+    if is_high_red and is_high_ratio_high_brightness:
+        if not is_high_green and not is_high_blue:
+            return 0
+        elif is_high_green and not is_high_blue:
+            return 4 if is_high_brightness else 3
+        else:
+            return 5
+    else:
+        return 2 if is_high_blue else 1
 
 # 写真から得たパラメータを返す
 
@@ -55,18 +69,25 @@ def generate_image():
         red, green, blue = calculate_rgb(pil_image)
         contrast = calculate_contrast(pil_image)
         brightness = calculate_brightness(pil_image)
-        high = calculate_ratio_high_brightness(pil_image)
+        ratio_high_brightness = calculate_high_brightness_ratio(pil_image)
+        base_id = calculate_base_id(red, green, blue, brightness, ratio_high_brightness)
+        cid = f"0x{base_id}{int(red):02x}{int(green):02x}{int(blue):02x}"
+        
         green_mask = (aura[:, :, 0] == 0) & (aura[:, :, 1] == 255) & (aura[:, :, 2] == 0)
         aura_bgr = aura[:, :, :3]
         aura_bgr[green_mask] = [blue, green, red]
         _, buffer = cv2.imencode('.png', image)
         img_str = base64.b64encode(buffer).decode('utf-8')
+        
+        
         response = {
             "contrast": contrast,
             "brightness": brightness,
+            "high_braitness_ratio": ratio_high_brightness,
             "red": red,
             "green": green,
             "blue": blue,
+            "cid": cid,
             "modified_image": img_str,
         }
         
