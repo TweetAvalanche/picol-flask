@@ -15,6 +15,6 @@ def create_app():
     app.register_blueprint(chara_bp, url_prefix="/chara")
     app.register_blueprint(token_bp, url_prefix="/token")
 
-    init_db()
+    print(init_db())
 
     return app

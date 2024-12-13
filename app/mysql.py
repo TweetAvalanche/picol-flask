@@ -26,7 +26,7 @@ def init_users():
             CREATE TABLE IF NOT EXISTS users (
                 uid INT AUTO_INCREMENT PRIMARY KEY,
                 message VARCHAR(512),
-                default_cid INT,
+                default_cid INT
             )
         """)
         conn.commit()
@@ -36,19 +36,19 @@ def init_users():
         print(f"Error: {err}")
         return  jsonify({"error": str(err)}), 500
 
-def init_charas():
+def init_characters():
     conn = get_db_connection()
     if isinstance(conn, tuple):
         return conn  # エラーメッセージを返す
     try:
         cursor = conn.cursor()
         cursor.execute("""
-            CREATE TABLE IF NOT EXISTS charas (
+            CREATE TABLE IF NOT EXISTS characters (
                 cid INT AUTO_INCREMENT PRIMARY KEY,
                 uid INT,
-                character_param VARCHAR(255),
+                character_param VARCHAR(16),
                 character_name VARCHAR(255),
-                raw_image BASE64 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                raw_image MEDIUMBLOB
             )
         """)
         conn.commit()
@@ -84,10 +84,11 @@ def init_db():
     if isinstance(result, tuple):
         return result  # エラーメッセージを返す
 
-    # result = init_charas()
-    # if isinstance(result, tuple):
-    #     return result  # エラーメッセージを返す
+    result = init_characters()
+    if isinstance(result, tuple):
+        return result  # エラーメッセージを返す
 
     result = init_tokens()
     if isinstance(result, tuple):
         return result  # エラーメッセージを返す
+    print("hello")
