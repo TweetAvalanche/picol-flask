@@ -4,7 +4,7 @@ import cv2
 import numpy as np
 import base64
 
-chara_bp = Blueprint('chara', __name__)
+character_bp = Blueprint('character', __name__)
 
 # 画像を扱う関数
 
@@ -66,7 +66,7 @@ def generate_aura(aura, red, green, blue) -> str:
 
 # 写真から得たパラメータを返す
 
-@chara_bp.route("/generate", methods=["POST"])
+@character_bp.route("/generate", methods=["POST"])
 def generate_image():
     if 'image' not in request.files:
         return jsonify({"error": "No image file provided"}), 400
