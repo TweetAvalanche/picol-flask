@@ -9,22 +9,34 @@ chara_bp = Blueprint('chara', __name__)
 
 # 画像を扱う関数
 
-def calculate_contrast(image):
+def calculate_contrast(image, resize_factor=0.5):
+    image = image.resize((int(image.width * resize_factor), int(image.height * resize_factor)))
     grayscale = image.convert("L")
     stat = ImageStat.Stat(grayscale)
     contrast = stat.stddev[0] 
     return contrast
 
-def calculate_brightness(image):
+def calculate_brightness(image, resize_factor=0.5):
+    image = image.resize((int(image.width * resize_factor), int(image.height * resize_factor)))
     grayscale = image.convert("L")
     stat = ImageStat.Stat(grayscale)
     brightness = stat.mean[0]
     return brightness
 
-def calculate_rgb(image):
+def calculate_ratio_high_brightness(image, resize_factor=0.5):
+    image = image.resize((int(image.width * resize_factor), int(image.height * resize_factor)))
+    grayscale = np.array(image.convert("L"))
+    high = np.sum(grayscale >= 170)
+    total = grayscale.size
+    return high / total
+
+def calculate_rgb(image, resize_factor=0.5):
+    image = image.resize((int(image.width * resize_factor), int(image.height * resize_factor)))
     stat = ImageStat.Stat(image)
     red, green, blue = stat.mean[:3]
     return red, green, blue
+
+
 
 # 写真から得たパラメータを返す
 
@@ -43,6 +55,7 @@ def generate_image():
         red, green, blue = calculate_rgb(pil_image)
         contrast = calculate_contrast(pil_image)
         brightness = calculate_brightness(pil_image)
+        high = calculate_ratio_high_brightness(pil_image)
         green_mask = (aura[:, :, 0] == 0) & (aura[:, :, 1] == 255) & (aura[:, :, 2] == 0)
         aura_bgr = aura[:, :, :3]
         aura_bgr[green_mask] = [blue, green, red]
@@ -56,6 +69,10 @@ def generate_image():
             "blue": blue,
             "modified_image": img_str,
         }
+        
+        # デフォルトの名前を決める
+        # TODO: データベースにparamやrawなどを登録し、name、paramやcidとかも返す
+        
         return jsonify(response)
     except Exception as e: # 500 internal server error
         return jsonify({"error": str(e)}), 500
