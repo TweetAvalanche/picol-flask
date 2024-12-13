@@ -3,7 +3,7 @@ from mysql.connector import Error
 import base64
 from .mysql import get_db_connection
 from .character_defs import generate_character
-wfrom .user import get_user
+from .user import get_user
 
 character_bp = Blueprint('character', __name__)
 
