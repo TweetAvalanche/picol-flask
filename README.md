@@ -3,11 +3,7 @@
 docker compose を用いて起動してください
 
 ```bash
-# flaskサーバーをビルド
-docker compose build
-
-# コンテナを起動
-docker compose up -d
+docker compose up -d --build
 ```
 
 サーバーは gunicorn を用いて起動されます
