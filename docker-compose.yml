@@ -6,7 +6,6 @@ services:
       - "5012:5012"
     depends_on:
       - mysql
-    restart: always
 
   mysql:
     image: mysql:latest
@@ -20,7 +19,6 @@ services:
       - mysql_data:/var/lib/mysql
     ports:
       - "3306:3306"
-    restart: always
 
   phpmyadmin:
     image: phpmyadmin:latest
@@ -33,7 +31,6 @@ services:
       - "8080:80"
     depends_on:
       - mysql
-    restart: always
 
 volumes:
   mysql_data:

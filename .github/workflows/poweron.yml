@@ -1,0 +1,16 @@
+name: Power on
+
+on:
+  workflow_dispatch: # 手動起動または別のワークフローからトリガー
+
+jobs:
+  start-containers:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Power on
+        run: |
+          cd /home/famisics/p2-flask
+          docker compose up -d --build
