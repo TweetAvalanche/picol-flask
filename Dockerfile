@@ -5,7 +5,13 @@ FROM python:3.9-slim
 WORKDIR /app
 
 # 必要なシステムライブラリをインストール
-RUN apt-get update && apt-get install -y libgl1 && apt-get clean
+RUN apt-get update && apt-get install -y \
+    libglib2.0-0 \
+    libgthread-2.0-0 \
+    libsm6 \
+    libxrender1 \
+    libxext6 \
+    && apt-get clean
 
 # ローカルファイルをイメージへコピー
 COPY requirements.txt requirements.txt
