@@ -26,7 +26,8 @@ def init_users():
             CREATE TABLE IF NOT EXISTS users (
                 uid INT AUTO_INCREMENT PRIMARY KEY,
                 message VARCHAR(512),
-                default_cid INT
+                default_cid INT,
+                flash_count INT DEFAULT 0
             )
         """)
         conn.commit()
@@ -68,6 +69,7 @@ def init_tokens():
             CREATE TABLE IF NOT EXISTS tokens (
                 token VARCHAR(6) PRIMARY KEY,
                 uid INT,
+                selected_cid INT,
                 expire_at TIMESTAMP,
                 is_valid BOOLEAN DEFAULT TRUE
             )
