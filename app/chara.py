@@ -42,6 +42,7 @@ def calculate_base_id(red, green, blue, brightness, ratio_high_brightness) -> in
     is_high_blue = True if blue >= 150 else False
     is_high_ratio_high_brightness = True if ratio_high_brightness >= 0.5 else False
     is_high_brightness = True if brightness >= 150 else False
+    
     if is_high_red and is_high_ratio_high_brightness:
         if not is_high_green and not is_high_blue:
             return 0
@@ -51,6 +52,14 @@ def calculate_base_id(red, green, blue, brightness, ratio_high_brightness) -> in
             return 5
     else:
         return 2 if is_high_blue else 1
+
+def generate_aura(aura: cv2, red: float, green: float, blue: float) -> str:
+    green_mask = (aura[:, :, 0] == 0) & (aura[:, :, 1] == 255) & (aura[:, :, 2] == 0)
+    aura_bgr = aura[:, :, :3]
+    aura_bgr[green_mask] = [blue, green, red]
+    _, buffer = cv2.imencode('.png', aura)
+    img_str = base64.b64encode(buffer).decode('utf-8')
+    return img_str
 
 # 写真から得たパラメータを返す
 
@@ -71,22 +80,17 @@ def generate_image():
         brightness = calculate_brightness(pil_image)
         ratio_high_brightness = calculate_high_brightness_ratio(pil_image)
         base_id = calculate_base_id(red, green, blue, brightness, ratio_high_brightness)
-        cid = f"0x{base_id}{int(red):02x}{int(green):02x}{int(blue):02x}"
+        cid = f"{base_id}{int(red):02x}{int(green):02x}{int(blue):02x}"
         
-        green_mask = (aura[:, :, 0] == 0) & (aura[:, :, 1] == 255) & (aura[:, :, 2] == 0)
-        aura_bgr = aura[:, :, :3]
-        aura_bgr[green_mask] = [blue, green, red]
-        _, buffer = cv2.imencode('.png', image)
-        img_str = base64.b64encode(buffer).decode('utf-8')
-        
+        img_str = generate_aura(aura, red, green, blue)
         
         response = {
-            "contrast": contrast,
-            "brightness": brightness,
-            "high_braitness_ratio": ratio_high_brightness,
-            "red": red,
-            "green": green,
-            "blue": blue,
+            # "contrast": contrast,
+            # "brightness": brightness,
+            # "high_braitness_ratio": ratio_high_brightness,
+            # "red": red,
+            # "green": green,
+            # "blue": blue,
             "cid": cid,
             "modified_image": img_str,
         }
