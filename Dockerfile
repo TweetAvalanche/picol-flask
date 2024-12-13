@@ -13,8 +13,6 @@ RUN apt-get -y update && \
             libgl1-mesa-dev
 RUN curl -kL https://bootstrap.pypa.io/get-pip.py | python3
 
-RUN pip3 install opencv-python
-
 # ローカルファイルをイメージへコピー
 COPY requirements.txt requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
