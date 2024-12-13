@@ -3,4 +3,4 @@ gunicorn
 mysql-connector-python
 Pillow
 requests
-opencv-python
+opencv-python-headless
