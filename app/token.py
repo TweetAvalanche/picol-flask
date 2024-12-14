@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 from .mysql import get_db_connection
 from .user import get_user
 from .character import get_character
+import json
 
 token_bp = Blueprint('token', __name__)
 
@@ -42,12 +43,12 @@ def create_token():
         conn.commit()
         cursor.close()
         conn.close()
-    except Error as e:
-        error_response = {"error": str(e)}
+    except Error as err:
+        error_response = {"error": str(err)}
         print(error_response)
         return jsonify(error_response), 500
 
-    print({"token": token})  # レスポンスをコンソールに出力
+    print({"token": token})
     return jsonify({"token": token})
 
 # !トークンの検証
@@ -78,14 +79,16 @@ def check_token():
         
         cursor.close()
         conn.close()
-    except Error as e:
-        error_response = {"error": str(e)}
+    except Error as err:
+        error_response = {"error": str(err)}
         print(error_response)
         return jsonify(error_response), 500
     if token_data:
         uid = int(token_data["uid"])
-        user = get_user(uid)
-        character = get_character(user["default_cid"])
+        user_json = get_user(uid)
+        user = json.loads(user_json)
+        character_json = get_character(user["default_cid"])
+        character = json.loads(character_json)
         response = {
             "uid": uid,
             "user_message": user["user_message"],
@@ -94,7 +97,7 @@ def check_token():
             "character_param": character["character_param"],
             "character_aura_image": character["character_aura_image"]
         }
-        print(response)  # レスポンスをコンソールに出力
+        print(response)
         return jsonify(response)
     else:
         error_response = {"error": "token not found or not valid"}

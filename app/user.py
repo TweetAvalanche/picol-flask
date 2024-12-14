@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 from mysql.connector import Error
 from .mysql import get_db_connection
 from .character import get_character
+import json
 
 user_bp = Blueprint('user', __name__)
 
@@ -32,11 +33,11 @@ def add_user():
             "character_param": "",
             "character_aura_image": ""
         }
-        print(response)  # レスポンスをコンソールに出力
+        print(response)
         return jsonify(response), 201
     except Error as err:
         error_response = {"error": str(err)}
-        print(error_response)  # エラーレスポンスをコンソールに出力
+        print(error_response)
         return jsonify(error_response), 500
 
 # !ユーザー情報の取得
@@ -50,7 +51,7 @@ def get_user(uid = None):
     # 値なしエラー
     if not uid:
         error_response = {"error": "Missing uid"}
-        print(error_response)  # エラーレスポンスをコンソールに出力
+        print(error_response)
         return jsonify(error_response), 400
     
     # 型検証
@@ -82,10 +83,11 @@ def get_user(uid = None):
                     "character_param": "",
                     "character_aura_image": ""
                 }
-                print(response)  # レスポンスをコンソールに出力
+                print(response)
                 return jsonify(response), 200
             else:
-                character = get_character(cid)
+                character_json = get_character(cid)
+                character = json.loads(character_json)
                 response = {
                     "uid": uid,
                     "user_message": user['message'],
@@ -94,11 +96,11 @@ def get_user(uid = None):
                     "character_param": character['character_param'],
                     "character_aura_image": character['character_aura_image']
                 }
-                print(response)  # レスポンスをコンソールに出力
+                print(response)
                 return jsonify(response), 200
         else:
             error_response = {"error": "user not found"}
-            print(error_response)  # エラーレスポンスをコンソールに出力
+            print(error_response)
             return jsonify(error_response), 404
     except Error as err:
         error_response = {"error": str(err)}
@@ -151,10 +153,11 @@ def update_user():
                 "character_param": "",
                 "character_aura_image": ""
             }
-            print(response)  # レスポンスをコンソールに出力
+            print(response)
             return jsonify(response), 200
         else:
-            character = get_character(cid)
+            character_json = get_character(cid)
+            character = json.loads(character_json)
             response = {
                 "uid": uid,
                 "user_message": user['message'],
@@ -163,7 +166,7 @@ def update_user():
                 "character_param": character['character_param'],
                 "character_aura_image": character['character_aura_image']
             }
-            print(response)  # レスポンスをコンソールに出力
+            print(response)
             return jsonify(response), 200
     except Error as err:
         error_response = {"error": str(err)}
