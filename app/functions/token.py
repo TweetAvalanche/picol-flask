@@ -87,7 +87,7 @@ def check_token_function(token):
     if token_data:
         uid = int(token_data["uid"])
         user = get_user_function(uid)
-        character = get_character_function(user["default_cid"])
+        character = get_character_function(user["cid"])
         response = {
             "uid": uid,
             "user_message": user["user_message"],

@@ -29,7 +29,7 @@ def get_user_function(uid):
         cursor.close()
         conn.close()
         if user:
-            cid = user['default_cid']
+            cid = user['cid']
             if cid == 0:
                 response = {
                     "uid": uid,
@@ -95,7 +95,7 @@ def update_user_function(uid, message):
         cursor.close()
         conn.close()
         user = get_user_function(uid)
-        cid = user['default_cid']
+        cid = user['cid']
         if cid == 0:
             response = {
                 "uid": uid,
