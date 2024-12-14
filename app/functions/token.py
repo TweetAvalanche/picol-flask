@@ -2,8 +2,8 @@ from mysql.connector import Error
 import random
 import string
 from datetime import datetime, timedelta
-from app.mysql import get_db_connection
-from .user import get_user
+from ..mysql import get_db_connection
+from .user import get_user_function
 from .character import get_character_function
 
 
@@ -75,7 +75,7 @@ def check_token_function(token):
         return err
     if token_data:
         uid = int(token_data["uid"])
-        user = get_user(uid)
+        user = get_user_function(uid)
         character = get_character_function(user["default_cid"])
         response = {
             "uid": uid,

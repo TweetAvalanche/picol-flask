@@ -1,6 +1,6 @@
 from mysql.connector import Error
-from app.mysql import get_db_connection
-from functions.character import get_character_function
+from ..mysql import get_db_connection
+from .character import get_character_function
 
 def get_user_function(uid):
 
