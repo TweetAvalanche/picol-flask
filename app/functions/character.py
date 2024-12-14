@@ -189,7 +189,7 @@ def get_character_function(cid):
                 "cid": cid,
                 "character_param": character["character_param"],
                 "character_name": character["character_name"],
-                "character_aura_image": character["character_aura_image"],
+                "character_aura_image": character_aura_image,
                 "raw_image": character["raw_image"],
                 "status": 200
             }
