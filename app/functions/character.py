@@ -149,18 +149,6 @@ def get_character_function(cid):
     
     # 値なしエラー
     if not cid:
-        error_response = {"error": "Missing cid", "status": 400}
-        print(error_response)
-        return error_response
-    
-    # 型検証
-    if not isinstance(cid, int):
-        error_response = {"error": "cid must be an integer", "status": 400}
-        print(error_response)
-        return error_response
-    
-    # cid=0の場合は、デフォルトキャラクターを返す
-    if cid == 0:
         response = {
             "uid": 0,
             "user_message": "キャラクターが作成されていないためユーザーを検索できません",
@@ -172,6 +160,12 @@ def get_character_function(cid):
         }
         print(response)
         return response
+    
+    # 型検証
+    if not isinstance(cid, int):
+        error_response = {"error": "cid must be an integer", "status": 400}
+        print(error_response)
+        return error_response
     
     # データベースへの接続
     conn = get_db_connection()
