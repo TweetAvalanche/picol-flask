@@ -87,8 +87,11 @@ def check_token_function(token):
     if token_data:
         uid = int(token_data["uid"])
         user = get_user_function(uid)
-        character = get_character_function(user["cid"])
-        print(character)
+        cid = user["cid"]
+        print(f"cid: {cid}")
+        character = get_character_function(cid)
+        print(f"user: {user}")
+        print(f"character: {character}")
         response = {
             "uid": uid,
             "user_message": user["user_message"],

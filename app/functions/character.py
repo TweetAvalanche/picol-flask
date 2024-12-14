@@ -159,6 +159,20 @@ def get_character_function(cid):
         print(error_response)
         return error_response
     
+    # cid=0の場合は、デフォルトキャラクターを返す
+    if cid == 0:
+        response = {
+            "uid": 0,
+            "user_message": "キャラクターが作成されていないためユーザーを検索できません",
+            "cid": 0,
+            "character_param": "",
+            "character_name": "",
+            "character_aura_image": "",
+            "status": 200
+        }
+        print(response)
+        return response
+    
     # データベースへの接続
     conn = get_db_connection()
     if isinstance(conn, tuple):
