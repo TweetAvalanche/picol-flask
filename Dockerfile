@@ -1,6 +1,8 @@
 # ベースイメージ
 FROM python:3.9-slim
 
+ENV PYTHONUNBUFFERED=1
+
 # 作業ディレクトリを指定
 WORKDIR /app
 
@@ -12,4 +14,4 @@ COPY . .
 
 EXPOSE 5012
 
-CMD ["gunicorn", "-b", "0.0.0.0:5012", "server:app", "--log-level", "debug", "--log-file", "-"]
+CMD ["gunicorn", "-b", "0.0.0.0:5012", "server:app", "--log-level", "debug", "--capture-output", "--log-file", "-"]
