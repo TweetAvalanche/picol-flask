@@ -26,7 +26,7 @@ def init_users():
             CREATE TABLE IF NOT EXISTS users (
                 uid INT AUTO_INCREMENT PRIMARY KEY,
                 message VARCHAR(512),
-                default_cid INT DEFAULT 0,
+                cid INT DEFAULT 0,
                 flash_count INT DEFAULT 0
             )
         """)

@@ -30,7 +30,7 @@ def get_user_function(uid):
         cursor.close()
         conn.close()
         if user:
-            cid = user['default_cid']
+            cid = user['cid']
             if cid == 0:
                 response = {
                     "uid": uid,
@@ -316,7 +316,7 @@ def set_default_character_function(cid):
         # パラメータをタプルとして渡すことで、SQLインジェクションを防ぐ
         cursor.execute("""
             UPDATE users
-            SET default_cid = %s
+            SET cid = %s
             WHERE uid = %s
         """, (cid, uid))
         conn.commit()
