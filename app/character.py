@@ -14,25 +14,39 @@ def add_character():
 
     file = request.files['image']
     if file.filename == '':
-        return 'No selected file', 400
+        return jsonify({"error": "no selected file"}), 400
 
     uid = request.args.get('uid', type=int)
     
     # パラメータの取得
     response = add_character_function(file, uid)
     
-    return jsonify(response), 200
+    if response['status'] == 200:
+        return jsonify(response), 200
+    elif response['status'] == 400:
+        return jsonify(response), 400
+    elif response['status'] == 404:
+        return jsonify(response), 404
+    else:
+        return jsonify(response), 500
 
 # !キャラクターの取得
 @character_bp.route("/", methods=["GET"])
-def get_character(cid = None):
+def get_character():
 
     # パラメータの取得
-    if cid is None:
-        cid = request.args.get('cid', type=int)
+    cid = request.args.get('cid', type=int)
     
     response = get_character_function(cid)
-    return jsonify(response), 200
+    
+    if response['status'] == 200:
+        return jsonify(response), 200
+    elif response['status'] == 400:
+        return jsonify(response), 400
+    elif response['status'] == 404:
+        return jsonify(response), 404
+    else:
+        return jsonify(response), 500
 
 # !全キャラクターの取得
 @character_bp.route("/all", methods=["GET"])
@@ -42,7 +56,15 @@ def get_all_characters():
     uid = request.args.get('uid', type=int)
 
     response = get_all_characters_function(uid)
-    return jsonify(response), 200
+    
+    if response['status'] == 200:
+        return jsonify(response), 200
+    elif response['status'] == 400:
+        return jsonify(response), 400
+    elif response['status'] == 404:
+        return jsonify(response), 404
+    else:
+        return jsonify(response), 500
 
 
 
@@ -55,20 +77,34 @@ def rename_character():
     character_name = request.args.get('character_name', type=str)
     make_default = request.args.get('make_default', type=int)
     
+    if make_default is None:
+        make_default = False
+    
     response = rename_character_function(cid, character_name, make_default)
-    return jsonify(response), 200
+    
+    if response['status'] == 200:
+        return jsonify(response), 200
+    elif response['status'] == 400:
+        return jsonify(response), 400
+    elif response['status'] == 404:
+        return jsonify(response), 404
+    else:
+        return jsonify(response), 500
 
 # !デフォルトキャラクターの設定
 @character_bp.route("/default", methods=["PUT"])
-def set_default_character(cid = None):
-    if cid is None:
-        # パラメータの取得
-        uid = request.args.get('uid', type=int)
-        cid = request.args.get('cid', type=int)
-    else:
-        character = get_character(cid)
-        character = json.loads(character)
-        uid = character["uid"]
+def set_default_character():
+
+    # パラメータの取得
+    cid = request.args.get('cid', type=int)
         
-    response = set_default_character_function(cid, uid)
-    return jsonify(response), 200
+    response = set_default_character_function(cid)
+    
+    if response['status'] == 200:
+        return jsonify(response), 200
+    elif response['status'] == 400:
+        return jsonify(response), 400
+    elif response['status'] == 404:
+        return jsonify(response), 404
+    else:
+        return jsonify(response), 500

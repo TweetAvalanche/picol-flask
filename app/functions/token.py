@@ -23,9 +23,13 @@ def create_token_function(uid):
     # トークンの生成
     token = "".join(random.choices(string.hexdigits[:16], k=6))
     expire_at = datetime.now() + timedelta(hours=1)
+    
+    # データベースへの接続
+    conn = get_db_connection()
+    if isinstance(conn, tuple):
+        return conn  # エラーメッセージを返す
 
     try:
-        conn = get_db_connection()
         cursor = conn.cursor()
         # パラメータをタプルとして渡すことで、SQLインジェクションを防ぐ
         cursor.execute(
@@ -53,8 +57,12 @@ def check_token_function(token):
         print(error_response)
         return error_response
 
+    # データベースへの接続
+    conn = get_db_connection()
+    if isinstance(conn, tuple):
+        return conn  # エラーメッセージを返す
+    
     try:
-        conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
         # パラメータをタプルとして渡すことで、SQLインジェクションを防ぐ
         cursor.execute("SELECT * FROM tokens WHERE token = %s", (token,))
@@ -73,6 +81,7 @@ def check_token_function(token):
         error_response = {"error": str(err), "status": 500}
         print(error_response)
         return err
+    
     if token_data:
         uid = int(token_data["uid"])
         user = get_user_function(uid)

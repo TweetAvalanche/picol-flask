@@ -8,9 +8,8 @@ user_bp = Blueprint('user', __name__)
 # !ユーザー情報の追加
 @user_bp.route('/', methods=['POST'])
 def add_user():
-
+    # デフォルトメッセージ
     default_message = "こんにちは"
-
     # データベースへの接続
     conn = get_db_connection()
     if isinstance(conn, tuple):
@@ -41,14 +40,20 @@ def add_user():
 
 # !ユーザー情報の取得
 @user_bp.route('/', methods=['GET'])
-def get_user(uid = None):
-    
+def get_user():
     # パラメータの取得
-    if uid is None:
-        uid = request.args.get('uid', type=int)
+    uid = request.args.get('uid', type=int)
 
     response = get_user_function(uid)
-    return jsonify(response), 200
+    
+    if response['status'] == 200:
+        return jsonify(response), 200
+    elif response['status'] == 400:
+        return jsonify(response), 400
+    elif response['status'] == 404:
+        return jsonify(response), 404
+    else:
+        return jsonify(response), 500
 
 # !ユーザー情報の更新
 @user_bp.route('/message', methods=['PUT'])
@@ -58,4 +63,12 @@ def update_user():
     message = request.args.get('message', type=str)
     
     response = update_user_function(uid, message)
-    return jsonify(response), 200
+    
+    if response['status'] == 200:
+        return jsonify(response), 200
+    elif response['status'] == 400:
+        return jsonify(response), 400
+    elif response['status'] == 404:
+        return jsonify(response), 404
+    else:
+        return jsonify(response), 500

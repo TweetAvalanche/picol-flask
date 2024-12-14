@@ -1,45 +1,8 @@
 from mysql.connector import Error
 from .character_defs import generate_character
+from .user import get_user_function
 from ..mysql import get_db_connection
 import base64
-
-
-# !ユーザーメッセージの取得
-def get_user_message(uid):
-    
-    # 値なしエラー
-    if not uid:
-        error_response = {"error": "Missing uid", "status": 400}
-        print(error_response)
-        return error_response
-    
-    # 型検証
-    if not isinstance(uid, int):
-        error_response = {"error": "uid must be an integer", "status": 400}
-        print(error_response)
-        return error_response
-    
-    # データベースへの接続
-    conn = get_db_connection()
-    if isinstance(conn, tuple):
-        return None  # エラーメッセージを返す
-
-    try:
-        cursor = conn.cursor()
-        cursor.execute("SELECT message FROM users WHERE uid = %s", (uid,))
-        result = cursor.fetchone()
-        cursor.close()
-        conn.close()
-        if result:
-            return result[0]
-        else:
-            error_response = {"error": "user not found", "status": 404}
-            print(error_response)
-            return error_response
-    except Error as err:
-        error_response = {"error": str(err), "status": 500}
-        print(error_response)
-        return error_response
 
 # !キャラクターの追加
 def add_character_function(file, uid):
@@ -52,14 +15,11 @@ def add_character_function(file, uid):
     # デバッグ用のログ出力を追加
     print(f"raw_image: {raw_image[:100]}...")  # 画像データの最初の100文字を表示
 
-    print(type(file))
-    print(file)
-
     character = generate_character(file)
 
     # パラメータの取得
     character_param = character["character_param"]
-    character_name = "NOT_IMPLEMENTED"
+    character_name = "ぴこる"
     character_aura_image = character["character_aura_image"]
 
     # 値なしエラー
@@ -106,9 +66,10 @@ def add_character_function(file, uid):
         cursor.close()
         conn.close()
         set_default_character_function(cid)
+        user = get_user_function(uid)
         response = {
             "uid": uid,
-            "user_message": get_user_message(uid),
+            "user_message": user["user_message"],
             "cid": cid,
             "character_name": character_name,
             "character_param": character_param,
@@ -121,53 +82,6 @@ def add_character_function(file, uid):
         error_response = {"error": str(err), "status": 500}
         print(error_response)
         return error_response
-
-
-def get_all_characters_function(uid):
-    
-    # 値なしエラー
-    if not uid:
-        error_response = {"error": "Missing uid", "status": 400}
-        print(error_response)
-        return error_response
-    
-    # 型検証
-    if not isinstance(uid, int):
-        error_response = {"error": "uid must be an integer", "status": 400}
-        print(error_response)
-        return error_response
-    
-    # データベースへの接続
-    conn = get_db_connection()
-    if isinstance(conn, tuple):
-        return conn
-    
-    try:
-        cursor = conn.cursor(dictionary=True)
-        # パラメータをタプルとして渡すことで、SQLインジェクションを防ぐ
-        cursor.execute("SELECT * FROM characters WHERE uid = %s", (uid,))
-        characters = cursor.fetchall()
-        cursor.close()
-        conn.close()
-        response = []
-        for character in characters:
-            uid = character["uid"]
-            response.append({
-                "uid": uid,
-                "user_message": get_user_message(uid),
-                "cid": character["cid"],
-                "character_param": character["character_param"],
-                "character_name": character["character_name"],
-                "character_aura_image": character["character_aura_image"],
-            })
-        response["status"] = 200
-        print(response)
-        return response
-    except Error as err:
-        error_response = {"error": str(err), "status": 500}
-        print(error_response)
-        return error_response
-
 
 # !キャラクターの取得
 def get_character_function(cid):
@@ -198,9 +112,10 @@ def get_character_function(cid):
         conn.close()
         if character:
             uid = character["uid"]
+            user = get_user_function(uid)
             response = {
                 "uid": uid,
-                "user_message": get_user_message(uid),
+                "user_message": user["user_message"],
                 "cid": cid,
                 "character_param": character["character_param"],
                 "character_name": character["character_name"],
@@ -214,6 +129,53 @@ def get_character_function(cid):
             error_response = {"error": "character not found", "status": 404}
             print(error_response)
             return error_response
+    except Error as err:
+        error_response = {"error": str(err), "status": 500}
+        print(error_response)
+        return error_response
+    
+# !全キャラクターの取得
+def get_all_characters_function(uid):
+    
+    # 値なしエラー
+    if not uid:
+        error_response = {"error": "Missing uid", "status": 400}
+        print(error_response)
+        return error_response
+    
+    # 型検証
+    if not isinstance(uid, int):
+        error_response = {"error": "uid must be an integer", "status": 400}
+        print(error_response)
+        return error_response
+    
+    # データベースへの接続
+    conn = get_db_connection()
+    if isinstance(conn, tuple):
+        return conn
+    
+    try:
+        cursor = conn.cursor(dictionary=True)
+        # パラメータをタプルとして渡すことで、SQLインジェクションを防ぐ
+        cursor.execute("SELECT * FROM characters WHERE uid = %s", (uid,))
+        characters = cursor.fetchall()
+        cursor.close()
+        conn.close()
+        response = []
+        for character in characters:
+            uid = character["uid"]
+            user = get_user_function(uid)
+            response.append({
+                "uid": uid,
+                "user_message": user["user_message"],
+                "cid": character["cid"],
+                "character_param": character["character_param"],
+                "character_name": character["character_name"],
+                "character_aura_image": character["character_aura_image"],
+            })
+        response["status"] = 200
+        print(response)
+        return response
     except Error as err:
         error_response = {"error": str(err), "status": 500}
         print(error_response)
@@ -266,27 +228,22 @@ def rename_character_function(cid, character_name, make_default):
         print(error_response)
         return error_response
 
-def set_default_character_function(cid = None, uid = None):
+def set_default_character_function(cid):
     
     # 値なしエラー
-    if not uid:
-        error_response = {"error": "Missing uid", "status": 400}
-        print(error_response)
-        return error_response
     if not cid:
         error_response = {"error": "Missing cid", "status": 400}
         print(error_response)
         return error_response
 
     # 型検証
-    if not isinstance(uid, int):
-        error_response = {"error": "uid must be an integer", "status": 400}
-        print(error_response)
-        return error_response
     if not isinstance(cid, int):
         error_response = {"error": "cid must be an integer", "status": 400}
         print(error_response)
         return error_response
+    
+    character = get_character_function(cid)
+    uid = character["uid"]
 
     # データベースへの接続
     conn = get_db_connection()
