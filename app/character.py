@@ -36,9 +36,13 @@ def get_user_message(uid):
         if result:
             return result[0]
         else:
-            return None
+            error_response = {"error": "user not found"}
+            print(error_response)
+            return jsonify(error_response), 404
     except Error as err:
-        return None
+        error_response = {"error": str(err)}
+        print(error_response)
+        return jsonify(error_response), 500
 
 # !キャラクターの追加
 @character_bp.route("/", methods=["POST"])
@@ -125,7 +129,7 @@ def add_character():
             "character_param": character_param,
             "character_aura_image": character_aura_image
         }
-        print(response)  # レスポンスをコンソールに出力
+        print(response)
         return jsonify(response), 200
     except Error as err:
         error_response = {"error": str(err)}
@@ -175,7 +179,7 @@ def get_character(cid = None):
                 "character_aura_image": character["character_aura_image"],
                 "raw_image": character["raw_image"]
             }
-            print(response)  # レスポンスをコンソールに出力
+            print(response)
             return jsonify(response), 200
         else:
             error_response = {"error": "character not found"}
@@ -228,7 +232,7 @@ def get_all_characters():
                 "character_name": character["character_name"],
                 "character_aura_image": character["character_aura_image"],
             })
-        print(response)  # レスポンスをコンソールに出力
+        print(response)
         return jsonify(response), 200
     except Error as err:
         error_response = {"error": str(err)}
@@ -281,7 +285,7 @@ def rename_character():
         else:
             response = get_character(cid)
             del response["raw_image"]
-            print(response)  # レスポンスをコンソールに出力
+            print(response)
             return jsonify(response), 200
     except Error as err:
         error_response = {"error": str(err)}
@@ -292,8 +296,8 @@ def rename_character():
 @character_bp.route("/default", methods=["PUT"])
 def set_default_character(cid = None):
 
-    uid = ""
-    cid = ""
+    uid = 0
+    cid = 0
 
     if cid is None:
         # パラメータの取得
@@ -340,7 +344,7 @@ def set_default_character(cid = None):
         cursor.close()
         conn.close()
         response = get_character(cid)
-        print(response)  # レスポンスをコンソールに出力
+        print(response)
         del response["raw_image"]
         return jsonify(response), 200
     except Error as err:
