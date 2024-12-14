@@ -29,12 +29,22 @@ def get_user_message(uid):
 @character_bp.route("/", methods=["POST"])
 def add_character():
 
-    # 画像が含まれているか確認
+    # 画像が含まれているか確認、含まれていれば変換
     if 'image' not in request.files:
-        error_response = {"error": "No image file provided"}
-        print(error_response)
-        return jsonify(error_response), 415
+        return 'No image part in the request', 400
+
     file = request.files['image']
+    if file.filename == '':
+        return 'No selected file', 400
+
+    raw_image = base64.b64encode(file.read()).decode('utf-8')
+    
+    # デバッグ用のログ出力を追加
+    print(f"raw_image: {raw_image[:100]}...")  # 画像データの最初の100文字を表示
+
+    print(type(file))
+    print(file)
+
     character = generate_character(file)
 
     # パラメータの取得
@@ -42,7 +52,6 @@ def add_character():
     character_param = character["character_param"]
     character_name = "NOT_IMPLEMENTED"
     character_aura_image = character["character_aura_image"]
-    raw_image = base64.b64encode(file.read()).decode('utf-8')
 
     # 値なしエラー
     if not uid:
