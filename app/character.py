@@ -292,8 +292,8 @@ def rename_character():
 @character_bp.route("/default", methods=["PUT"])
 def set_default_character(cid = None):
 
-    uid = ""
-    cid = ""
+    uid = 0
+    cid = 0
 
     if cid is None:
         # パラメータの取得
