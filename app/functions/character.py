@@ -150,11 +150,11 @@ def get_character_function(cid):
     # 値なしエラー
     if not cid:
         response = {
-            "uid": 0,
+            "uid": 1,
             "user_message": "キャラクターが作成されていないためユーザーを検索できません",
             "cid": 0,
-            "character_param": "",
-            "character_name": "",
+            "character_param": "1ff2222",
+            "character_name": "デフォルトキャラクター・ゼロ",
             "character_aura_image": "",
             "status": 200
         }
