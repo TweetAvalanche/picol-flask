@@ -237,6 +237,7 @@ def rename_character():
     # パラメータの取得
     cid = request.args.get('cid', type=int)
     character_name = request.args.get('character_name', type=str)
+    make_default = request.args.get('make_default', type=int)
 
     # 値なしエラー
     if not cid:
@@ -276,10 +277,13 @@ def rename_character():
         conn.commit()
         cursor.close()
         conn.close()
-        response = get_character(cid)
-        del response["raw_image"]
-        print(response)  # レスポンスをコンソールに出力
-        return jsonify(response), 200
+        if make_default:
+            return set_default_character(cid)
+        else:
+            response = get_character(cid)
+            del response["raw_image"]
+            print(response)  # レスポンスをコンソールに出力
+            return jsonify(response), 200
     except Error as err:
         error_response = {"error": str(err)}
         print(error_response)
@@ -337,6 +341,7 @@ def set_default_character(cid = None):
         conn.close()
         response = get_character(cid)
         print(response)  # レスポンスをコンソールに出力
+        del response["raw_image"]
         return jsonify(response), 200
     except Error as err:
         error_response = {"error": str(err)}
