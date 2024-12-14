@@ -19,7 +19,7 @@ def add_character_function(file, uid):
 
     # パラメータの取得
     character_param = character["character_param"]
-    character_name = "ぴこる"
+    character_name = "ぴこるー"
     character_aura_image = character["character_aura_image"]
 
     # 値なしエラー
