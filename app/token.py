@@ -14,15 +14,7 @@ def create_token():
     if "status" in response:
         status_code = response['status']
         del response["status"]    
-
-        if status_code == 200:
-            return jsonify(response), 200
-        elif status_code == 400:
-            return jsonify(response), 400
-        elif status_code == 404:
-            return jsonify(response), 404
-        else:
-            return jsonify(response), 500
+        return jsonify(response), status_code
     else:
         return jsonify(response), 500
 
@@ -38,15 +30,7 @@ def check_token():
     if "status" in response:
         status_code = response['status']
         del response["status"]    
-
-        if status_code == 200:
-            return jsonify(response), 200
-        elif status_code == 400:
-            return jsonify(response), 400
-        elif status_code == 404:
-            return jsonify(response), 404
-        else:
-            return jsonify(response), 500
+        return jsonify(response), status_code
     else:
         return jsonify(response), 500
 
