@@ -123,3 +123,13 @@ def get_character_raw():
         return jsonify(response), status_code
     else:
         return jsonify(response), 500
+
+@character_bp.route("/count", methods=["GET"])
+def count_chara_val():
+    # パラメータの取得
+    uid = request.args.get('uid', type=int)
+    
+    response = get_all_characters_function(uid)
+    
+    character_count = len(response)
+    return jsonify({"character_count": character_count}), 200
