@@ -3,6 +3,36 @@ from .character_defs import generate_character
 from ..mysql import get_db_connection
 import base64
 
+def get_character_2(cid):
+
+    # データベースへの接続
+    conn = get_db_connection()
+    if isinstance(conn, tuple):
+        return conn # エラーメッセージを返す
+    
+    try:
+        cursor = conn.cursor(dictionary=True)
+        # パラメータをタプルとして渡すことで、SQLインジェクションを防ぐ
+        cursor.execute("SELECT * FROM characters WHERE cid = %s", (cid,))
+        character = cursor.fetchone()
+        cursor.close()
+        conn.close()
+        if character:
+            response = {
+                "character_param": character["character_param"],
+                "character_name": character["character_name"],
+            }
+            print(response)
+            return response
+        else:
+            error_response = {"error": "character not found", "status": 404}
+            print(error_response)
+            return error_response
+    except Error as err:
+        error_response = {"error": str(err), "status": 500}
+        print(error_response)
+        return error_response
+
 def get_user_function(uid):
 
     # 値なしエラー
@@ -44,14 +74,14 @@ def get_user_function(uid):
                 print(response)
                 return response
             else:
-                character = get_character_function(cid)
+                character = get_character_2(cid)
                 response = {
                     "uid": uid,
                     "user_message": user['message'],
                     "cid": cid,
                     "character_name": character['character_name'],
                     "character_param": character['character_param'],
-                    "character_aura_image": character['character_aura_image'],
+                    "character_aura_image": "",
                     "status": 200
                 }
                 print(response)
@@ -134,7 +164,7 @@ def add_character_function(file, uid):
             "cid": cid,
             "character_name": character_name,
             "character_param": character_param,
-            "character_aura_image": character_aura_image,
+            "character_aura_image": "",
             "status": 200
         }
         print(response)
@@ -189,8 +219,7 @@ def get_character_function(cid):
                 "cid": cid,
                 "character_param": character["character_param"],
                 "character_name": character["character_name"],
-                "character_aura_image": character_aura_image,
-                "raw_image": character["raw_image"],
+                "character_aura_image": "",
                 "status": 200
             }
             print(response)
@@ -241,7 +270,7 @@ def get_all_characters_function(uid):
                 "cid": character["cid"],
                 "character_param": character["character_param"],
                 "character_name": character["character_name"],
-                "character_aura_image": character["character_aura_image"],
+                "character_aura_image": "",
             })
         response["status"] = 200
         print(response)
@@ -336,6 +365,57 @@ def set_default_character_function(cid):
         print(response)
         del response["raw_image"]
         return response
+    except Error as err:
+        error_response = {"error": str(err), "status": 500}
+        print(error_response)
+        return error_response
+
+def get_character_raw_function(cid):
+    
+    # 値なしエラー
+    if not cid:
+        response = {
+            "uid": 1,
+            "user_message": "キャラクターが作成されていないためユーザーを検索できません",
+            "cid": 0,
+            "character_param": "1ff2222",
+            "character_name": "デフォルトキャラクター・ゼロ",
+            "character_aura_image": "",
+            "status": 200
+        }
+        print(response)
+        return response
+    
+    # 型検証
+    if not isinstance(cid, int):
+        error_response = {"error": "cid must be an integer", "status": 400}
+        print(error_response)
+        return error_response
+    
+    # データベースへの接続
+    conn = get_db_connection()
+    if isinstance(conn, tuple):
+        return conn # エラーメッセージを返す
+    
+    try:
+        cursor = conn.cursor(dictionary=True)
+        # パラメータをタプルとして渡すことで、SQLインジェクションを防ぐ
+        cursor.execute("SELECT * FROM characters WHERE cid = %s", (cid,))
+        character = cursor.fetchone()
+        cursor.close()
+        conn.close()
+        if character:
+            uid = character["uid"]
+            response = {
+                "raw_image": character["raw_image"],
+                "status": 200
+            }
+            print(response)
+            return response
+        else:
+            error_response = {"error": "character not found", "status": 404}
+            print(error_response)
+            return error_response
     except Error as err:
         error_response = {"error": str(err), "status": 500}
         print(error_response)

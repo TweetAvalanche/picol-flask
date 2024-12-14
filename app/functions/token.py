@@ -95,7 +95,7 @@ def check_token_function(token):
             "cid": character["cid"],
             "character_name": character["character_name"],
             "character_param": character["character_param"],
-            "character_aura_image": character["character_aura_image"],
+            "character_aura_image": "",
             "status": 200
         }
         print(response)

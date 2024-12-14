@@ -2,6 +2,36 @@ from mysql.connector import Error
 from ..mysql import get_db_connection
 from .character import get_character_function
 
+def get_character_2(cid):
+
+    # データベースへの接続
+    conn = get_db_connection()
+    if isinstance(conn, tuple):
+        return conn # エラーメッセージを返す
+    
+    try:
+        cursor = conn.cursor(dictionary=True)
+        # パラメータをタプルとして渡すことで、SQLインジェクションを防ぐ
+        cursor.execute("SELECT * FROM characters WHERE cid = %s", (cid,))
+        character = cursor.fetchone()
+        cursor.close()
+        conn.close()
+        if character:
+            response = {
+                "character_param": character["character_param"],
+                "character_name": character["character_name"],
+            }
+            print(response)
+            return response
+        else:
+            error_response = {"error": "character not found", "status": 404}
+            print(error_response)
+            return error_response
+    except Error as err:
+        error_response = {"error": str(err), "status": 500}
+        print(error_response)
+        return error_response
+
 def get_user_function(uid):
 
     # 値なしエラー
@@ -43,14 +73,14 @@ def get_user_function(uid):
                 print(response)
                 return response
             else:
-                character = get_character_function(cid)
+                character = get_character_2(cid)
                 response = {
                     "uid": uid,
                     "user_message": user['message'],
                     "cid": cid,
                     "character_name": character['character_name'],
                     "character_param": character['character_param'],
-                    "character_aura_image": character['character_aura_image'],
+                    "character_aura_image": "",
                     "status": 200
                 }
                 print(response)
@@ -116,7 +146,7 @@ def update_user_function(uid, message):
                 "cid": cid,
                 "character_name": character['character_name'],
                 "character_param": character['character_param'],
-                "character_aura_image": character['character_aura_image'],
+                "character_aura_image": "",
                 "status": 200
             }
             print(response)
