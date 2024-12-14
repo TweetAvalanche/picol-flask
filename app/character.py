@@ -333,7 +333,7 @@ def set_default_character(cid = None):
         return conn  # エラーメッセージを返す
 
     try:
-        cursor = conn.cursor()
+        cursor = conn.cursor(dictionary=True)
         # パラメータをタプルとして渡すことで、SQLインジェクションを防ぐ
         cursor.execute("""
             UPDATE users
