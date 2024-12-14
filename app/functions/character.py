@@ -182,6 +182,7 @@ def get_character_function(cid):
         if character:
             uid = character["uid"]
             user = get_user_function(uid)
+            character_aura_image = character["character_aura_image"] if "character_aura_image" in character else ""
             response = {
                 "uid": uid,
                 "user_message": user["user_message"],
