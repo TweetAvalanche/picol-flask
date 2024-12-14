@@ -46,9 +46,11 @@ def create_token_function(uid):
         error_response = {"error": str(err), "status": 500}
         print(error_response)
         return error_response
+    
+    response = {"token": token, "status": 200}
 
-    print({"token": token})
-    return {"token": token}
+    print(response)
+    return response
 
 def check_token_function(token):
     # 値なしエラー
