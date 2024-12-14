@@ -1,9 +1,7 @@
 from mysql.connector import Error
 from app.character_defs import generate_character
-from functions.mysql import get_db_connection
-from functions.character imoprt 
+from app.mysql import get_db_connection
 import base64
-
 
 
 # !ユーザーメッセージの取得
@@ -23,7 +21,7 @@ def get_user_message(uid):
     
     # データベースへの接続
     conn = get_db_connection()
-    if isinstance(conn, dict):
+    if isinstance(conn, tuple):
         return None  # エラーメッセージを返す
 
     try:
@@ -94,7 +92,7 @@ def add_character_function(file, uid):
 
     # データベースへの接続
     conn = get_db_connection()
-    if isinstance(conn, dict):
+    if isinstance(conn, tuple):
         return conn  # エラーメッセージを返す
 
     try:
@@ -141,7 +139,7 @@ def get_character_function(cid):
     
     # データベースへの接続
     conn = get_db_connection()
-    if isinstance(conn, dict):
+    if isinstance(conn, tuple):
         return conn # エラーメッセージを返す
     
     try:
@@ -194,7 +192,7 @@ def rename_character_function(cid, character_name, make_default):
 
     # データベースへの接続
     conn = get_db_connection()
-    if isinstance(conn, dict):
+    if isinstance(conn, tuple):
         return conn  # エラーメッセージを返す
 
     try:
