@@ -1,5 +1,5 @@
 from mysql.connector import Error
-from app.character_defs import generate_character
+from .character_defs import generate_character
 from app.mysql import get_db_connection
 import base64
 
