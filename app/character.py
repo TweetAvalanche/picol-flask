@@ -1,10 +1,5 @@
 from flask import Blueprint, request, jsonify
-from mysql.connector import Error
-import base64
-from .mysql import get_db_connection
-from .character_defs import generate_character
-from functions import character
-from functions.character import get_user_message, add_character_function, get_all_characters_function, get_character_function, rename_character_function, set_default_character_function
+from functions.character import add_character_function, get_all_characters_function, get_character_function, rename_character_function, set_default_character_function
 import json
 
 character_bp = Blueprint('character', __name__)

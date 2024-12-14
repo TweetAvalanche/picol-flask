@@ -1,13 +1,5 @@
 from flask import Blueprint, request, jsonify
-from mysql.connector import Error
-import random
-import string
-from datetime import datetime, timedelta
-from .mysql import get_db_connection
-from .user import get_user
-from .character import get_character
 from functions.token import create_token_function, check_token_function
-import json
 
 token_bp = Blueprint('token', __name__)
 
