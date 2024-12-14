@@ -8,12 +8,27 @@ character_bp = Blueprint('character', __name__)
 
 # !ユーザーメッセージの取得
 def get_user_message(uid):
+    
+    # 値なしエラー
+    if not uid:
+        error_response = {"error": "Missing uid"}
+        print(error_response)
+        return jsonify(error_response), 400
+    
+    # 型検証
+    if not isinstance(uid, int):
+        error_response = {"error": "uid must be an integer"}
+        print(error_response)
+        return jsonify(error_response), 400
+    
+    # データベースへの接続
     conn = get_db_connection()
     if isinstance(conn, tuple):
         return None  # エラーメッセージを返す
 
     try:
         cursor = conn.cursor()
+        # パラメータをタプルとして渡すことで、SQLインジェクションを防ぐ
         cursor.execute("SELECT message FROM users WHERE uid = %s", (uid,))
         result = cursor.fetchone()
         cursor.close()
@@ -77,26 +92,10 @@ def add_character():
         error_response = {"error": "Missing raw_image"}
         print(error_response)
         return jsonify(error_response), 400
-
-    # SQLインジェクション対策
-    if ";" in uid or "--" in uid or "'" in uid or "\"" in uid:
-        error_response = {"error": "Invalid characters in uid"}
-        print(error_response)
-        return jsonify(error_response), 400
-    if ";" in character_param or "--" in character_param or "'" in character_param or "\"" in character_param:
-        error_response = {"error": "Invalid characters in character_param"}
-        print(error_response)
-        return jsonify(error_response), 400
-    if ";" in character_name or "--" in character_name or "'" in character_name or "\"" in character_name:
-        error_response = {"error": "Invalid characters in character_name"}
-        print(error_response)
-        return jsonify(error_response), 400
-    if ";" in character_aura_image or "--" in character_aura_image or "'" in character_aura_image or "\"" in character_aura_image:
-        error_response = {"error": "Invalid characters in character_aura_image"}
-        print(error_response)
-        return jsonify(error_response), 400
-    if ";" in raw_image or "--" in raw_image or "'" in raw_image or "\"" in raw_image:
-        error_response = {"error": "Invalid characters in raw_image"}
+    
+    # 型検証
+    if not isinstance(uid, int):
+        error_response = {"error": "uid must be an integer"}
         print(error_response)
         return jsonify(error_response), 400
 
@@ -107,6 +106,7 @@ def add_character():
 
     try:
         cursor = conn.cursor()
+        # パラメータをタプルとして渡すことで、SQLインジェクションを防ぐ
         cursor.execute("""
             INSERT INTO characters (uid, character_param, character_name, raw_image)
             VALUES (%s, %s, %s, %s)
@@ -211,6 +211,7 @@ def get_all_characters():
     
     try:
         cursor = conn.cursor(dictionary=True)
+        # パラメータをタプルとして渡すことで、SQLインジェクションを防ぐ
         cursor.execute("SELECT * FROM characters WHERE uid = %s", (uid,))
         characters = cursor.fetchall()
         cursor.close()
@@ -255,12 +256,6 @@ def rename_character():
     # 型検証
     if not isinstance(cid, int):
         error_response = {"error": "cid must be an integer"}
-        print(error_response)
-        return jsonify(error_response), 400
-
-    # SQLインジェクション対策
-    if ";" in character_name or "--" in character_name or "'" in character_name or "\"" in character_name:
-        error_response = {"error": "Invalid characters in character_name"}
         print(error_response)
         return jsonify(error_response), 400
 
@@ -334,6 +329,7 @@ def set_default_character(cid = None):
 
     try:
         cursor = conn.cursor()
+        # パラメータをタプルとして渡すことで、SQLインジェクションを防ぐ
         cursor.execute("""
             UPDATE users
             SET default_cid = %s

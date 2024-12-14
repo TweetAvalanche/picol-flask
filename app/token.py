@@ -26,7 +26,6 @@ def create_token():
         error_response = {"error": "uid must be an integer"}
         print(error_response)
         return jsonify(error_response), 400
-    
 
     # トークンの生成
     token = ''.join(random.choices(string.hexdigits[:16], k=6))
@@ -35,6 +34,7 @@ def create_token():
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
+        # パラメータをタプルとして渡すことで、SQLインジェクションを防ぐ
         cursor.execute("""
             INSERT INTO tokens (token, uid, expire_at, is_valid)
             VALUES (%s, %s, %s, TRUE)
@@ -61,20 +61,16 @@ def check_token():
         error_response = {"error": "token is required"}
         print(error_response)
         return jsonify(error_response), 400
-    
-    # SQLインジェクション対策
-    if ";" in token or "--" in token or "'" in token or "\"" in token:
-        error_response = {"error": "Invalid characters in token"}
-        print(error_response)
-        return jsonify(error_response), 400
 
     try:
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
+        # パラメータをタプルとして渡すことで、SQLインジェクションを防ぐ
         cursor.execute("SELECT * FROM tokens WHERE token = %s", (token,))
         token_data = cursor.fetchone()
         
         if token_data and token_data["is_valid"]:
+            # パラメータをタプルとして渡すことで、SQLインジェクションを防ぐ
             cursor.execute("UPDATE tokens SET is_valid = FALSE WHERE token = %s", (token,))
             conn.commit()
         elif token_data and not token_data["is_valid"]:
