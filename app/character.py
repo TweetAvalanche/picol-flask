@@ -115,6 +115,7 @@ def add_character():
         cid = cursor.lastrowid
         cursor.close()
         conn.close()
+        print(f"cid: {cid}")
         set_default_character(cid)
         response = {
             "uid": uid,
