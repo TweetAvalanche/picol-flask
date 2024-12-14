@@ -20,14 +20,21 @@ def add_character():
     # パラメータの取得
     response = add_character_function(file, uid)
     
-    if response['status'] == 200:
-        return jsonify(response), 200
-    elif response['status'] == 400:
-        return jsonify(response), 400
-    elif response['status'] == 404:
-        return jsonify(response), 404
+    if "status" in response:
+        status_code = response['status']
+        del response["status"]    
+
+        if status_code == 200:
+            return jsonify(response), 200
+        elif status_code == 400:
+            return jsonify(response), 400
+        elif status_code == 404:
+            return jsonify(response), 404
+        else:
+            return jsonify(response), 500
     else:
         return jsonify(response), 500
+
 
 # !キャラクターの取得
 @character_bp.route("/", methods=["GET"])
@@ -38,14 +45,21 @@ def get_character():
     
     response = get_character_function(cid)
     
-    if response['status'] == 200:
-        return jsonify(response), 200
-    elif response['status'] == 400:
-        return jsonify(response), 400
-    elif response['status'] == 404:
-        return jsonify(response), 404
+    if "status" in response:
+        status_code = response['status']
+        del response["status"]    
+
+        if status_code == 200:
+            return jsonify(response), 200
+        elif status_code == 400:
+            return jsonify(response), 400
+        elif status_code == 404:
+            return jsonify(response), 404
+        else:
+            return jsonify(response), 500
     else:
         return jsonify(response), 500
+
 
 # !全キャラクターの取得
 @character_bp.route("/all", methods=["GET"])
@@ -56,14 +70,21 @@ def get_all_characters():
 
     response = get_all_characters_function(uid)
     
-    if response['status'] == 200:
-        return jsonify(response), 200
-    elif response['status'] == 400:
-        return jsonify(response), 400
-    elif response['status'] == 404:
-        return jsonify(response), 404
+    if "status" in response:
+        status_code = response['status']
+        del response["status"]    
+
+        if status_code == 200:
+            return jsonify(response), 200
+        elif status_code == 400:
+            return jsonify(response), 400
+        elif status_code == 404:
+            return jsonify(response), 404
+        else:
+            return jsonify(response), 500
     else:
         return jsonify(response), 500
+
 
 
 
@@ -81,14 +102,21 @@ def rename_character():
     
     response = rename_character_function(cid, character_name, make_default)
     
-    if response['status'] == 200:
-        return jsonify(response), 200
-    elif response['status'] == 400:
-        return jsonify(response), 400
-    elif response['status'] == 404:
-        return jsonify(response), 404
+    if "status" in response:
+        status_code = response['status']
+        del response["status"]    
+
+        if status_code == 200:
+            return jsonify(response), 200
+        elif status_code == 400:
+            return jsonify(response), 400
+        elif status_code == 404:
+            return jsonify(response), 404
+        else:
+            return jsonify(response), 500
     else:
         return jsonify(response), 500
+
 
 # !デフォルトキャラクターの設定
 @character_bp.route("/default", methods=["PUT"])
@@ -99,11 +127,18 @@ def set_default_character():
         
     response = set_default_character_function(cid)
     
-    if response['status'] == 200:
-        return jsonify(response), 200
-    elif response['status'] == 400:
-        return jsonify(response), 400
-    elif response['status'] == 404:
-        return jsonify(response), 404
+    if "status" in response:
+        status_code = response['status']
+        del response["status"]    
+
+        if status_code == 200:
+            return jsonify(response), 200
+        elif status_code == 400:
+            return jsonify(response), 400
+        elif status_code == 404:
+            return jsonify(response), 404
+        else:
+            return jsonify(response), 500
     else:
         return jsonify(response), 500
+

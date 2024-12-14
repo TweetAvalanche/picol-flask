@@ -46,14 +46,21 @@ def get_user():
 
     response = get_user_function(uid)
     
-    if response['status'] == 200:
-        return jsonify(response), 200
-    elif response['status'] == 400:
-        return jsonify(response), 400
-    elif response['status'] == 404:
-        return jsonify(response), 404
+    if "status" in response:
+        status_code = response['status']
+        del response["status"]    
+
+        if status_code == 200:
+            return jsonify(response), 200
+        elif status_code == 400:
+            return jsonify(response), 400
+        elif status_code == 404:
+            return jsonify(response), 404
+        else:
+            return jsonify(response), 500
     else:
         return jsonify(response), 500
+
 
 # !ユーザー情報の更新
 @user_bp.route('/message', methods=['PUT'])
@@ -64,11 +71,18 @@ def update_user():
     
     response = update_user_function(uid, message)
     
-    if response['status'] == 200:
-        return jsonify(response), 200
-    elif response['status'] == 400:
-        return jsonify(response), 400
-    elif response['status'] == 404:
-        return jsonify(response), 404
+    if "status" in response:
+        status_code = response['status']
+        del response["status"]    
+
+        if status_code == 200:
+            return jsonify(response), 200
+        elif status_code == 400:
+            return jsonify(response), 400
+        elif status_code == 404:
+            return jsonify(response), 404
+        else:
+            return jsonify(response), 500
     else:
         return jsonify(response), 500
+

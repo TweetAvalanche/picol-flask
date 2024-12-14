@@ -11,14 +11,21 @@ def create_token():
 
     response = create_token_function(uid)
     
-    if response['status'] == 200:
-        return jsonify(response), 200
-    elif response['status'] == 400:
-        return jsonify(response), 400
-    elif response['status'] == 404:
-        return jsonify(response), 404
+    if "status" in response:
+        status_code = response['status']
+        del response["status"]    
+
+        if status_code == 200:
+            return jsonify(response), 200
+        elif status_code == 400:
+            return jsonify(response), 400
+        elif status_code == 404:
+            return jsonify(response), 404
+        else:
+            return jsonify(response), 500
     else:
         return jsonify(response), 500
+
 
 # !トークンの検証
 @token_bp.route("/", methods=["GET"])
@@ -28,11 +35,18 @@ def check_token():
     
     response = check_token_function(token)
     
-    if response['status'] == 200:
-        return jsonify(response), 200
-    elif response['status'] == 400:
-        return jsonify(response), 400
-    elif response['status'] == 404:
-        return jsonify(response), 404
+    if "status" in response:
+        status_code = response['status']
+        del response["status"]    
+
+        if status_code == 200:
+            return jsonify(response), 200
+        elif status_code == 400:
+            return jsonify(response), 400
+        elif status_code == 404:
+            return jsonify(response), 404
+        else:
+            return jsonify(response), 500
     else:
         return jsonify(response), 500
+
