@@ -30,7 +30,7 @@ def get_user_function(uid):
         cursor.close()
         conn.close()
         if user:
-            cid = user['cid']
+            cid = user['default_cid']
             if cid == 0:
                 response = {
                     "uid": uid,
