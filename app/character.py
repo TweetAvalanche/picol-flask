@@ -306,6 +306,7 @@ def set_default_character(cid = None):
         cid = request.args.get('cid', type=int)
     else:
         character = get_character(cid)
+        character = json.loads(character)
         uid = character["uid"]
 
     # 値なしエラー
