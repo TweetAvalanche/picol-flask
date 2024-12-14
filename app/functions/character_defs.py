@@ -53,6 +53,19 @@ def calculate_base_id(red, green, blue, brightness, ratio_high_brightness) -> in
     is_high_blue = True if blue >= 100 else False
     is_high_ratio_high_brightness = True if ratio_high_brightness >= 0.3 else False
     is_high_brightness = True if brightness >= 150 else False
+    
+    print({
+        "red": red,
+        "green": green,
+        "blue": blue,
+        "brightness": brightness,
+        "ratio_high_brightness": ratio_high_brightness,
+        "is_high_red": is_high_red,
+        "is_high_green": is_high_green,
+        "is_high_blue": is_high_blue,
+        "is_high_ratio_high_brightness": is_high_ratio_high_brightness,
+        "is_high_brightness": is_high_brightness
+    })
 
     if is_high_ratio_high_brightness:
         if is_high_red and not is_high_green and not is_high_blue:
