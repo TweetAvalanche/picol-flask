@@ -4,7 +4,7 @@ import base64
 from .mysql import get_db_connection
 from .character_defs import generate_character
 from functions import character
-from functions.character import get_user_message, add_character_function, get_character_function, rename_character_function, set_default_character_function
+from functions.character import get_user_message, add_character_function, get_all_characters_function, get_character_function, rename_character_function, set_default_character_function
 import json
 
 character_bp = Blueprint('character', __name__)
@@ -42,9 +42,12 @@ def get_character(cid = None):
 # !全キャラクターの取得
 @character_bp.route("/all", methods=["GET"])
 def get_all_characters():
-
+    
     # パラメータの取得
     uid = request.args.get('uid', type=int)
+
+    response = get_all_characters_function(uid)
+    return jsonify(response), 200
 
 
 

@@ -121,7 +121,54 @@ def add_character_function(file, uid):
         error_response = {"error": str(err), "status": 500}
         print(error_response)
         return error_response
+
+
+def get_all_characters_function(uid):
     
+    # 値なしエラー
+    if not uid:
+        error_response = {"error": "Missing uid", "status": 400}
+        print(error_response)
+        return error_response
+    
+    # 型検証
+    if not isinstance(uid, int):
+        error_response = {"error": "uid must be an integer", "status": 400}
+        print(error_response)
+        return error_response
+    
+    # データベースへの接続
+    conn = get_db_connection()
+    if isinstance(conn, tuple):
+        return conn
+    
+    try:
+        cursor = conn.cursor(dictionary=True)
+        # パラメータをタプルとして渡すことで、SQLインジェクションを防ぐ
+        cursor.execute("SELECT * FROM characters WHERE uid = %s", (uid,))
+        characters = cursor.fetchall()
+        cursor.close()
+        conn.close()
+        response = []
+        for character in characters:
+            uid = character["uid"]
+            response.append({
+                "uid": uid,
+                "user_message": get_user_message(uid),
+                "cid": character["cid"],
+                "character_param": character["character_param"],
+                "character_name": character["character_name"],
+                "character_aura_image": character["character_aura_image"],
+            })
+        response["status"] = 200
+        print(response)
+        return response
+    except Error as err:
+        error_response = {"error": str(err), "status": 500}
+        print(error_response)
+        return error_response
+
+
 # !キャラクターの取得
 def get_character_function(cid):
     
