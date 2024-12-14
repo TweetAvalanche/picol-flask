@@ -31,7 +31,9 @@ def add_character():
 
     # 画像が含まれているか確認
     if 'image' not in request.files:
-        return jsonify({"error": "No image file provided"}), 400
+        error_response = {"error": "No image file provided"}
+        print(error_response)
+        return jsonify(error_response), 400
     file = request.files['image']
     character = generate_character(file)
 
@@ -44,27 +46,47 @@ def add_character():
 
     # 値なしエラー
     if not uid:
-        return jsonify({"error": "Missing uid"}), 400
+        error_response = {"error": "Missing uid"}
+        print(error_response)
+        return jsonify(error_response), 400
     if not character_param:
-        return jsonify({"error": "Missing character_param"}), 400
+        error_response = {"error": "Missing character_param"}
+        print(error_response)
+        return jsonify(error_response), 400
     if not character_name:
-        return jsonify({"error": "Missing character_name"}), 400
+        error_response = {"error": "Missing character_name"}
+        print(error_response)
+        return jsonify(error_response), 400
     if not character_aura_image:
-        return jsonify({"error": "Missing character_aura_image"}), 400
+        error_response = {"error": "Missing character_aura_image"}
+        print(error_response)
+        return jsonify(error_response), 400
     if not raw_image:
-        return jsonify({"error": "Missing raw_image"}), 400
+        error_response = {"error": "Missing raw_image"}
+        print(error_response)
+        return jsonify(error_response), 400
 
     # SQLインジェクション対策
     if ";" in uid or "--" in uid or "'" in uid or "\"" in uid:
-        return jsonify({"error": "Invalid characters in uid"}), 400
+        error_response = {"error": "Invalid characters in uid"}
+        print(error_response)
+        return jsonify(error_response), 400
     if ";" in character_param or "--" in character_param or "'" in character_param or "\"" in character_param:
-        return jsonify({"error": "Invalid characters in character_param"}), 400
+        error_response = {"error": "Invalid characters in character_param"}
+        print(error_response)
+        return jsonify(error_response), 400
     if ";" in character_name or "--" in character_name or "'" in character_name or "\"" in character_name:
-        return jsonify({"error": "Invalid characters in character_name"}), 400
+        error_response = {"error": "Invalid characters in character_name"}
+        print(error_response)
+        return jsonify(error_response), 400
     if ";" in character_aura_image or "--" in character_aura_image or "'" in character_aura_image or "\"" in character_aura_image:
-        return jsonify({"error": "Invalid characters in character_aura_image"}), 400
+        error_response = {"error": "Invalid characters in character_aura_image"}
+        print(error_response)
+        return jsonify(error_response), 400
     if ";" in raw_image or "--" in raw_image or "'" in raw_image or "\"" in raw_image:
-        return jsonify({"error": "Invalid characters in raw_image"}), 400
+        error_response = {"error": "Invalid characters in raw_image"}
+        print(error_response)
+        return jsonify(error_response), 400
 
     # データベースへの接続
     conn = get_db_connection()
@@ -90,9 +112,12 @@ def add_character():
             "character_param": character_param,
             "character_aura_image": character_aura_image
         }
+        print(response)  # レスポンスをコンソールに出力
         return jsonify(response), 200
     except Error as err:
-        return jsonify({"error": str(err)}), 500
+        error_response = {"error": str(err)}
+        print(error_response)
+        return jsonify(error_response), 500
 
 # !キャラクターの取得
 @character_bp.route("/", methods=["GET"])
@@ -104,11 +129,15 @@ def get_character(cid = None):
     
     # 値なしエラー
     if not cid:
-        return jsonify({"error": "Missing cid"}), 400
+        error_response = {"error": "Missing cid"}
+        print(error_response)
+        return jsonify(error_response), 400
     
     # 型検証
     if not isinstance(cid, int):
-        return jsonify({"error": "cid must be an integer"}), 400
+        error_response = {"error": "cid must be an integer"}
+        print(error_response)
+        return jsonify(error_response), 400
     
     # データベースへの接続
     conn = get_db_connection()
@@ -133,11 +162,16 @@ def get_character(cid = None):
                 "character_aura_image": character["character_aura_image"],
                 "raw_image": character["raw_image"]
             }
+            print(response)  # レスポンスをコンソールに出力
             return jsonify(response), 200
         else:
-            return jsonify({"error": "character not found"}), 404
+            error_response = {"error": "character not found"}
+            print(error_response)
+            return jsonify(error_response), 404
     except Error as err:
-        return jsonify({"error": str(err)}), 500
+        error_response = {"error": str(err)}
+        print(error_response)
+        return jsonify(error_response), 500
 
 # !全キャラクターの取得
 @character_bp.route("/all", methods=["GET"])
@@ -148,11 +182,15 @@ def get_all_characters():
 
     # 値なしエラー
     if not uid:
-        return jsonify({"error": "Missing uid"}), 400
+        error_response = {"error": "Missing uid"}
+        print(error_response)
+        return jsonify(error_response), 400
     
     # 型検証
     if not isinstance(uid, int):
-        return jsonify({"error": "uid must be an integer"}), 400
+        error_response = {"error": "uid must be an integer"}
+        print(error_response)
+        return jsonify(error_response), 400
     
     # データベースへの接続
     conn = get_db_connection()
@@ -176,9 +214,12 @@ def get_all_characters():
                 "character_name": character["character_name"],
                 "character_aura_image": character["character_aura_image"],
             })
+        print(response)  # レスポンスをコンソールに出力
         return jsonify(response), 200
     except Error as err:
-        return jsonify({"error": str(err)}), 500
+        error_response = {"error": str(err)}
+        print(error_response)
+        return jsonify(error_response), 500
 
 # !キャラクターのリネーム
 @character_bp.route("/rename", methods=["PUT"])
@@ -190,17 +231,25 @@ def rename_character():
 
     # 値なしエラー
     if not cid:
-        return jsonify({"error": "Missing cid"}), 400
+        error_response = {"error": "Missing cid"}
+        print(error_response)
+        return jsonify(error_response), 400
     if not character_name:
-        return jsonify({"error": "Missing character_name"}), 400
+        error_response = {"error": "Missing character_name"}
+        print(error_response)
+        return jsonify(error_response), 400
 
     # 型検証
     if not isinstance(cid, int):
-        return jsonify({"error": "cid must be an integer"}), 400
+        error_response = {"error": "cid must be an integer"}
+        print(error_response)
+        return jsonify(error_response), 400
 
     # SQLインジェクション対策
     if ";" in character_name or "--" in character_name or "'" in character_name or "\"" in character_name:
-        return jsonify({"error": "Invalid characters in character_name"}), 400
+        error_response = {"error": "Invalid characters in character_name"}
+        print(error_response)
+        return jsonify(error_response), 400
 
     # データベースへの接続
     conn = get_db_connection()
@@ -220,9 +269,12 @@ def rename_character():
         conn.close()
         response = get_character(cid)
         del response["raw_image"]
+        print(response)  # レスポンスをコンソールに出力
         return jsonify(response), 200
     except Error as err:
-        return jsonify({"error": str(err)}), 500
+        error_response = {"error": str(err)}
+        print(error_response)
+        return jsonify(error_response), 500
 
 # !デフォルトキャラクターの設定
 @character_bp.route("/default", methods=["PUT"])
@@ -241,15 +293,23 @@ def set_default_character(cid = None):
 
     # 値なしエラー
     if not uid:
-        return jsonify({"error": "Missing uid"}), 400
+        error_response = {"error": "Missing uid"}
+        print(error_response)
+        return jsonify(error_response), 400
     if not cid:
-        return jsonify({"error": "Missing cid"}), 400
+        error_response = {"error": "Missing cid"}
+        print(error_response)
+        return jsonify(error_response), 400
 
     # 型検証
     if not isinstance(uid, int):
-        return jsonify({"error": "uid must be an integer"}), 400
+        error_response = {"error": "uid must be an integer"}
+        print(error_response)
+        return jsonify(error_response), 400
     if not isinstance(cid, int):
-        return jsonify({"error": "cid must be an integer"}), 400
+        error_response = {"error": "cid must be an integer"}
+        print(error_response)
+        return jsonify(error_response), 400
 
     # データベースへの接続
     conn = get_db_connection()
@@ -267,6 +327,9 @@ def set_default_character(cid = None):
         cursor.close()
         conn.close()
         response = get_character(cid)
+        print(response)  # レスポンスをコンソールに出力
         return jsonify(response), 200
     except Error as err:
-        return jsonify({"error": str(err)}), 500
+        error_response = {"error": str(err)}
+        print(error_response)
+        return jsonify(error_response), 500
