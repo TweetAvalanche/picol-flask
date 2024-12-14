@@ -68,7 +68,7 @@ def generate_character(file):
     # contrast = calculate_contrast(pil_image)
     brightness = calculate_brightness(pil_image)
     ratio_high_brightness = calculate_high_brightness_ratio(pil_image)
-    red, green, blue = calculate_rgb(image)
+    red, green, blue = calculate_rgb(pil_image)
     base_id = calculate_base_id(red, green, blue, brightness, ratio_high_brightness)
 
     character_param = f"{base_id}{int(red):02x}{int(green):02x}{int(blue):02x}"
