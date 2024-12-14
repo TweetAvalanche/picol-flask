@@ -318,7 +318,6 @@ def rename_character_function(cid, character_name, make_default):
             return set_default_character_function(cid)
         else:
             response = get_character_function(cid)
-            del response["raw_image"]
             response["status"] = 200
             print(response)
             return response
@@ -363,7 +362,6 @@ def set_default_character_function(cid):
         response = get_character_function(cid)
         response["status"] = 200
         print(response)
-        del response["raw_image"]
         return response
     except Error as err:
         error_response = {"error": str(err), "status": 500}
