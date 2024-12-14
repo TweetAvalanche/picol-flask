@@ -61,6 +61,7 @@ def rename_character():
     make_default = request.args.get('make_default', type=int)
     
     response = rename_character_function(cid, character_name, make_default)
+    return jsonify(response), 200
 
 # !デフォルトキャラクターの設定
 @character_bp.route("/default", methods=["PUT"])
