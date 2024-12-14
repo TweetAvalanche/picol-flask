@@ -1,6 +1,5 @@
 from flask import Blueprint, request, jsonify
-from functions.character import add_character_function, get_all_characters_function, get_character_function, rename_character_function, set_default_character_function
-import json
+from .functions.character import add_character_function, get_all_characters_function, get_character_function, rename_character_function, set_default_character_function
 
 character_bp = Blueprint('character', __name__)
 

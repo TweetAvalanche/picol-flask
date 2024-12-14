@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from functions.token import create_token_function, check_token_function
+from .functions.token import create_token_function, check_token_function
 
 token_bp = Blueprint('token', __name__)
 

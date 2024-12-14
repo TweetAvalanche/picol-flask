@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from mysql.connector import Error
 from .mysql import get_db_connection
-from functions.user import get_user_function, update_user_function
+from .functions.user import get_user_function, update_user_function
 
 user_bp = Blueprint('user', __name__)
 
