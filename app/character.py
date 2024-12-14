@@ -39,6 +39,9 @@ def add_character():
 
     raw_image = base64.b64encode(file.read()).decode('utf-8')
     
+    # ファイルポインタを先頭にリセット
+    file.seek(0)
+    
     # デバッグ用のログ出力を追加
     print(f"raw_image: {raw_image[:100]}...")  # 画像データの最初の100文字を表示
 
