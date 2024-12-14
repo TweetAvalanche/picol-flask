@@ -71,9 +71,6 @@ def get_all_characters():
     else:
         return jsonify(response), 200
 
-
-
-
 # !キャラクターのリネーム
 @character_bp.route("/rename", methods=["PUT"])
 def rename_character():
@@ -126,6 +123,3 @@ def get_character_raw():
         return jsonify(response), status_code
     else:
         return jsonify(response), 500
-
-@character_bp.route("/achieve", methods=["GET"])
-
