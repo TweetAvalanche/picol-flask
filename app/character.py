@@ -3,6 +3,7 @@ from mysql.connector import Error
 import base64
 from .mysql import get_db_connection
 from .character_defs import generate_character
+import json
 
 character_bp = Blueprint('character', __name__)
 
@@ -283,6 +284,7 @@ def rename_character():
             return set_default_character(cid)
         else:
             response = get_character(cid)
+            response = json.loads(response)
             del response["raw_image"]
             print(response)
             return jsonify(response), 200
@@ -343,6 +345,7 @@ def set_default_character(cid = None):
         cursor.close()
         conn.close()
         response = get_character(cid)
+        response = json.loads(response)
         print(response)
         del response["raw_image"]
         return jsonify(response), 200
