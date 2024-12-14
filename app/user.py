@@ -1,7 +1,8 @@
 from flask import Blueprint, request, jsonify
 from mysql.connector import Error
 from .mysql import get_db_connection
-from .character import get_character
+from functions.character import get_character_function
+from functions.user import get_user_function, update_user_function
 import json
 
 user_bp = Blueprint('user', __name__)
@@ -48,64 +49,8 @@ def get_user(uid = None):
     if uid is None:
         uid = request.args.get('uid', type=int)
 
-    # 値なしエラー
-    if not uid:
-        error_response = {"error": "Missing uid"}
-        print(error_response)
-        return jsonify(error_response), 400
-    
-    # 型検証
-    if not isinstance(uid, int):
-        error_response = {"error": "uid must be an integer"}
-        print(error_response)
-        return jsonify(error_response), 400
-
-    # データベースへの接続
-    conn = get_db_connection()
-    if isinstance(conn, tuple):
-        return conn  # エラーメッセージを返す
-
-    try:
-        cursor = conn.cursor(dictionary=True)
-        # パラメータをタプルとして渡すことで、SQLインジェクションを防ぐ
-        cursor.execute("SELECT * FROM users WHERE uid = %s", (uid,))
-        user = cursor.fetchone()
-        cursor.close()
-        conn.close()
-        if user:
-            cid = user['default_cid']
-            if cid == 0:
-                response = {
-                    "uid": uid,
-                    "user_message": user['message'],
-                    "cid": 0,
-                    "character_name": "",
-                    "character_param": "",
-                    "character_aura_image": ""
-                }
-                print(response)
-                return jsonify(response), 200
-            else:
-                character_json = get_character(cid)
-                character = json.loads(character_json)
-                response = {
-                    "uid": uid,
-                    "user_message": user['message'],
-                    "cid": cid,
-                    "character_name": character['character_name'],
-                    "character_param": character['character_param'],
-                    "character_aura_image": character['character_aura_image']
-                }
-                print(response)
-                return jsonify(response), 200
-        else:
-            error_response = {"error": "user not found"}
-            print(error_response)
-            return jsonify(error_response), 404
-    except Error as err:
-        error_response = {"error": str(err)}
-        print(error_response)
-        return jsonify(error_response), 500
+    response = get_user_function(uid)
+    return jsonify(response), 200
 
 # !ユーザー情報の更新
 @user_bp.route('/message', methods=['PUT'])
@@ -113,62 +58,5 @@ def update_user():
     # パラメータの取得
     uid = request.args.get('uid', type=int)
     message = request.args.get('message', type=str)
-
-    # 値なしエラー
-    if not uid:
-        error_response = {"error": "Missing uid"}
-        print(error_response)
-        return jsonify(error_response), 400
-    if not message:
-        error_response = {"error": "Missing message"}
-        print(error_response)
-        return jsonify(error_response), 400
     
-    # 型検証
-    if not isinstance(uid, int):
-        error_response = {"error": "uid must be an integer"}
-        print(error_response)
-        return jsonify(error_response), 400
-
-    # データベースへの接続
-    conn = get_db_connection()
-    if isinstance(conn, tuple):
-        return conn  # エラーメッセージを返す
-
-    try:
-        cursor = conn.cursor()
-        # パラメータをタプルとして渡すことで、SQLインジェクションを防ぐ
-        cursor.execute("UPDATE users SET message = %s WHERE uid = %s", (message, uid))
-        conn.commit()
-        cursor.close()
-        conn.close()
-        user = get_user(uid)
-        cid = user['default_cid']
-        if cid == 0:
-            response = {
-                "uid": uid,
-                "user_message": user['message'],
-                "cid": 0,
-                "character_name": "",
-                "character_param": "",
-                "character_aura_image": ""
-            }
-            print(response)
-            return jsonify(response), 200
-        else:
-            character_json = get_character(cid)
-            character = json.loads(character_json)
-            response = {
-                "uid": uid,
-                "user_message": user['message'],
-                "cid": cid,
-                "character_name": character['character_name'],
-                "character_param": character['character_param'],
-                "character_aura_image": character['character_aura_image']
-            }
-            print(response)
-            return jsonify(response), 200
-    except Error as err:
-        error_response = {"error": str(err)}
-        print(error_response)
-        return jsonify(error_response), 500
+    response = update_user_function(uid, message)
