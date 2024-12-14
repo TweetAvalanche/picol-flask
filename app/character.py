@@ -69,7 +69,7 @@ def get_all_characters():
         del response["status"]    
         return jsonify(response), status_code
     else:
-        return jsonify(response), 500
+        return jsonify(response), 200
 
 
 
@@ -126,3 +126,6 @@ def get_character_raw():
         return jsonify(response), status_code
     else:
         return jsonify(response), 500
+
+@character_bp.route("/achieve", methods=["GET"])
+

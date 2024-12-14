@@ -272,7 +272,6 @@ def get_all_characters_function(uid):
                 "character_name": character["character_name"],
                 "character_aura_image": "",
             })
-        response["status"] = 200
         print(response)
         return response
     except Error as err:
