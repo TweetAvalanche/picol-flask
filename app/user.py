@@ -32,9 +32,12 @@ def add_user():
             "character_param": "",
             "character_aura_image": ""
         }
+        print(response)  # レスポンスをコンソールに出力
         return jsonify(response), 201
     except Error as err:
-        return jsonify({"error": str(err)}), 500
+        error_response = {"error": str(err)}
+        print(error_response)  # エラーレスポンスをコンソールに出力
+        return jsonify(error_response), 500
 
 # !ユーザー情報の取得
 @user_bp.route('/', methods=['GET'])
@@ -46,11 +49,15 @@ def get_user(uid = None):
 
     # 値なしエラー
     if not uid:
-        return jsonify({"error": "Missing uid"}), 400
+        error_response = {"error": "Missing uid"}
+        print(error_response)  # エラーレスポンスをコンソールに出力
+        return jsonify(error_response), 400
     
     # 型検証
     if not isinstance(uid, int):
-        return jsonify({"error": "uid must be an integer"}), 400
+        error_response = {"error": "uid must be an integer"}
+        print(error_response)
+        return jsonify(error_response), 400
 
     # データベースへの接続
     conn = get_db_connection()
@@ -75,6 +82,7 @@ def get_user(uid = None):
                     "character_param": "",
                     "character_aura_image": ""
                 }
+                print(response)  # レスポンスをコンソールに出力
                 return jsonify(response), 200
             else:
                 character = get_character(cid)
@@ -86,11 +94,16 @@ def get_user(uid = None):
                     "character_param": character['character_param'],
                     "character_aura_image": character['character_aura_image']
                 }
+                print(response)  # レスポンスをコンソールに出力
                 return jsonify(response), 200
         else:
-            return jsonify({"error": "user not found"}), 404
+            error_response = {"error": "user not found"}
+            print(error_response)  # エラーレスポンスをコンソールに出力
+            return jsonify(error_response), 404
     except Error as err:
-        return jsonify({"error": str(err)}), 500
+        error_response = {"error": str(err)}
+        print(error_response)
+        return jsonify(error_response), 500
 
 # !ユーザー情報の更新
 @user_bp.route('/message', methods=['PUT'])
@@ -101,19 +114,29 @@ def update_user():
 
     # 値なしエラー
     if not uid:
-        return jsonify({"error": "Missing uid"}), 400
+        error_response = {"error": "Missing uid"}
+        print(error_response)
+        return jsonify(error_response), 400
     if not message:
-        return jsonify({"error": "Missing message"}), 400
+        error_response = {"error": "Missing message"}
+        print(error_response)
+        return jsonify(error_response), 400
     
     # 型検証
     if not isinstance(uid, int):
-        return jsonify({"error": "uid must be an integer"}), 400
+        error_response = {"error": "uid must be an integer"}
+        print(error_response)
+        return jsonify(error_response), 400
     if not isinstance(message, str):
-        return jsonify({"error": "message must be a string"}), 400
+        error_response = {"error": "message must be a string"}
+        print(error_response)
+        return jsonify(error_response), 400
     
     # SQLインジェクション対策
     if ";" in message or "--" in message or "'" in message or "\"" in message:
-        return jsonify({"error": "Invalid characters in message"}), 400
+        error_response = {"error": "Invalid characters in message"}
+        print(error_response)
+        return jsonify(error_response), 400
 
     # データベースへの接続
     conn = get_db_connection()
@@ -138,6 +161,7 @@ def update_user():
                 "character_param": "",
                 "character_aura_image": ""
             }
+            print(response)  # レスポンスをコンソールに出力
             return jsonify(response), 200
         else:
             character = get_character(cid)
@@ -149,6 +173,9 @@ def update_user():
                 "character_param": character['character_param'],
                 "character_aura_image": character['character_aura_image']
             }
+            print(response)  # レスポンスをコンソールに出力
             return jsonify(response), 200
     except Error as err:
-        return jsonify({"error": str(err)}), 500
+        error_response = {"error": str(err)}
+        print(error_response)
+        return jsonify(error_response), 500

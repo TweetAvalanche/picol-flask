@@ -17,11 +17,15 @@ def create_token():
 
     # 値なしエラー
     if not uid:
-        return jsonify({"error": "uid is required"}), 400
+        error_response = {"error": "uid is required"}
+        print(error_response)
+        return jsonify(error_response), 400
     
     # 型検証
     if not isinstance(uid, int):
-        return jsonify({"error": "uid must be an integer"}), 400
+        error_response = {"error": "uid must be an integer"}
+        print(error_response)
+        return jsonify(error_response), 400
     
 
     # トークンの生成
@@ -39,8 +43,11 @@ def create_token():
         cursor.close()
         conn.close()
     except Error as e:
-        return jsonify({"error": str(e)}), 500
+        error_response = {"error": str(e)}
+        print(error_response)
+        return jsonify(error_response), 500
 
+    print({"token": token})  # レスポンスをコンソールに出力
     return jsonify({"token": token})
 
 # !トークンの検証
@@ -51,11 +58,15 @@ def check_token():
 
     # 値なしエラー
     if not token:
-        return jsonify({"error": "token is required"}), 400
+        error_response = {"error": "token is required"}
+        print(error_response)
+        return jsonify(error_response), 400
     
     # SQLインジェクション対策
     if ";" in token or "--" in token or "'" in token or "\"" in token:
-        return jsonify({"error": "Invalid characters in token"}), 400
+        error_response = {"error": "Invalid characters in token"}
+        print(error_response)
+        return jsonify(error_response), 400
 
     try:
         conn = get_db_connection()
@@ -72,7 +83,9 @@ def check_token():
         cursor.close()
         conn.close()
     except Error as e:
-        return jsonify({"error": str(e)}), 500
+        error_response = {"error": str(e)}
+        print(error_response)
+        return jsonify(error_response), 500
     if token_data:
         uid = int(token_data["uid"])
         user = get_user(uid)
@@ -85,6 +98,9 @@ def check_token():
             "character_param": character["character_param"],
             "character_aura_image": character["character_aura_image"]
         }
+        print(response)  # レスポンスをコンソールに出力
         return jsonify(response)
     else:
-        return jsonify({"error": "token not found or not valid"}), 404
+        error_response = {"error": "token not found or not valid"}
+        print(error_response)
+        return jsonify(error_response), 404
