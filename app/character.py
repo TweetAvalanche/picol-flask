@@ -33,7 +33,7 @@ def add_character():
     if 'image' not in request.files:
         error_response = {"error": "No image file provided"}
         print(error_response)
-        return jsonify(error_response), 400
+        return jsonify(error_response), 415
     file = request.files['image']
     character = generate_character(file)
 
