@@ -3,7 +3,6 @@ from mysql.connector import Error
 from .mysql import get_db_connection
 from functions.character import get_character_function
 from functions.user import get_user_function, update_user_function
-import json
 
 user_bp = Blueprint('user', __name__)
 
@@ -60,3 +59,4 @@ def update_user():
     message = request.args.get('message', type=str)
     
     response = update_user_function(uid, message)
+    return jsonify(response), 200
