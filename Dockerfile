@@ -12,4 +12,4 @@ COPY . .
 
 EXPOSE 5012
 
-CMD ["gunicorn", "-b", "0.0.0.0:5012", "server:app"]
+CMD ["gunicorn", "-b", "0.0.0.0:5012", "server:app", "--log-level", "debug", "--log-file", "-"]
