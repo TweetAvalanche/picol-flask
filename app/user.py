@@ -127,16 +127,6 @@ def update_user():
         error_response = {"error": "uid must be an integer"}
         print(error_response)
         return jsonify(error_response), 400
-    if not isinstance(message, str):
-        error_response = {"error": "message must be a string"}
-        print(error_response)
-        return jsonify(error_response), 400
-    
-    # SQLインジェクション対策
-    if ";" in message or "--" in message or "'" in message or "\"" in message:
-        error_response = {"error": "Invalid characters in message"}
-        print(error_response)
-        return jsonify(error_response), 400
 
     # データベースへの接続
     conn = get_db_connection()
