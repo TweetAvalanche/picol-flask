@@ -131,5 +131,7 @@ def count_chara_val():
     
     response = get_all_characters_function(uid)
     
+    print(response)
+    
     character_count = len(response)
     return jsonify({"character_count": character_count}), 200
